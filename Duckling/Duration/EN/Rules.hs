@@ -240,6 +240,34 @@ ruleCompositeDuration = Rule
       _ -> Nothing
   }
 
+-- Clinc specify rule. Weekly test.
+ruleDurationDaily :: Rule
+ruleDurationDaily = Rule
+  { name = "daily"
+  , pattern =
+    [ regex "daily|(every day)|(per day)"
+    ]
+  , prod = \_ -> Just . Token Duration $ duration TG.Day 1
+  }
+
+ruleDurationWeekly :: Rule
+ruleDurationWeekly = Rule
+  { name = "weekly"
+  , pattern =
+    [ regex "weekly|(every week)|(per week)"
+    ]
+  , prod = \_ -> Just . Token Duration $ duration TG.Week 1
+  }
+
+ruleDurationYearly :: Rule
+ruleDurationYearly = Rule
+  { name = "yearly"
+  , pattern =
+    [ regex "yearly|(every year)|(per year)"
+    ]
+  , prod = \_ -> Just . Token Duration $ duration TG.Year 1
+  }
+
 rules :: [Rule]
 rules =
   [ ruleDurationQuarterOfAnHour
@@ -258,4 +286,8 @@ rules =
   , ruleNumeralQuotes
   , ruleCompositeDuration
   , ruleCompositeDurationCommasAnd
+  -- clinc 
+  , ruleDurationDaily
+  , ruleDurationWeekly
+  , ruleDurationYearly
   ]

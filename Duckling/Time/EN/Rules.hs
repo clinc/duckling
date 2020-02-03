@@ -133,6 +133,7 @@ ruleInstants = mkRuleInstants
   , ("today"        , TG.Day   , 0  , "todays?|(at this time)"           )
   , ("tomorrow"     , TG.Day   , 1  , "(tmrw?|tomm?or?rows?)"            )
   , ("yesterday"    , TG.Day   , - 1, "yesterdays?"                      )
+  , ("present"      , TG.Day   , 0,   "present?"                         )
   ]
 
 ruleNow :: Rule
@@ -1143,10 +1144,10 @@ ruleIntervalFromMonthDDDD :: Rule
 ruleIntervalFromMonthDDDD = Rule
   { name = "from <month> dd-dd (interval)"
   , pattern =
-    [ regex "from"
+    [ regex "(from|between)"
     , Predicate isAMonth
     , Predicate isDOMValue
-    , regex "\\-|to|th?ru|through|(un)?til(l)?"
+    , regex "\\-|to( the)?|and( the)?|th?ru|through|(un)?til(l)?"
     , Predicate isDOMValue
     ]
   , prod = \tokens -> case tokens of
@@ -1166,9 +1167,9 @@ ruleIntervalFromDDDDMonth :: Rule
 ruleIntervalFromDDDDMonth = Rule
   { name = "from the <day-of-month> (ordinal or number) to the <day-of-month> (ordinal or number) <named-month> (interval)"
   , pattern =
-    [ regex "from( the)?"
+    [ regex "(from|between)( the)?"
     , Predicate isDOMValue
-    , regex "\\-|to( the)?|th?ru|through|(un)?til(l)?"
+    , regex "\\-|to( the)?|and( the)?|th?ru|through|(un)?til(l)?"
     , Predicate isDOMValue
     , Predicate isAMonth
     ]
@@ -2249,13 +2250,15 @@ ruleDurationHenceAgo = Rule
   { name = "<duration> hence|ago"
   , pattern =
     [ dimension Duration
-    , regex "(hence|ago)"
+    , regex "(hence|later|before|previous|ago)"
     ]
   , prod = \tokens -> case tokens of
       (Token Duration dd:
        Token RegexMatch (GroupMatch (match:_)):
        _) -> case Text.toLower match of
-        "ago" -> tt $ durationAgo dd
+        "ago"      -> tt $ durationAgo dd
+        "previous" -> tt $ durationAgo dd
+        "before"   -> tt $ durationAgo dd
         _     -> tt $ inDuration dd
       _ -> Nothing
   }

@@ -1,6 +1,13 @@
-![Duckling Logo](https://github.com/facebook/duckling/raw/master/logo.png)
+# Fork information
 
-# Duckling [![Build Status](https://travis-ci.org/facebook/duckling.svg?branch=master)](https://travis-ci.org/facebook/duckling)
+This fork was created from commit **8d681f7** on Facebook's master branch (Dec 2019). The newest tagged version before this commit was v0.1.6.1 (Jun 2018).
+
+Tags on Clinc's fork follow [Semantic Versioning](https://semver.org/), starting from 0.2.0:
+
+The first tagged version is:
+c0.2.0 (**c** = Clinc Version)
+
+# Duckling 
 Duckling is a Haskell library that parses text into structured data.
 
 ```

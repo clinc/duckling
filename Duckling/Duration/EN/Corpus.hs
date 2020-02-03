@@ -120,4 +120,20 @@ allExamples = concat
              , "five and half min"
              , "5 and an half minute"
              ]
+-- clinc support
+  , examples (DurationData 1 Day)
+             [ "every day"
+             , "per day"
+             , "daily"
+             ]
+  , examples (DurationData 1 Week)
+             [ "every week"
+             , "per week"
+             , "weekly"
+             ]
+  , examples (DurationData 1 Year)
+             [ "every year"
+             , "per year"
+             , "yearly"
+             ]
   ]
