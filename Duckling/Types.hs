@@ -51,6 +51,7 @@ import Duckling.AmountOfMoney.Types (AmountOfMoneyData)
 import Duckling.CreditCardNumber.Types (CreditCardNumberData)
 import Duckling.Distance.Types (DistanceData)
 import Duckling.Duration.Types (DurationData)
+import Duckling.Recurrence.Types (RecurrenceData)
 import Duckling.Email.Types (EmailData)
 import Duckling.Locale
 import Duckling.Numeral.Types (NumeralData)
@@ -103,6 +104,7 @@ data Dimension a where
   CreditCardNumber :: Dimension CreditCardNumberData
   Distance :: Dimension DistanceData
   Duration :: Dimension DurationData
+  Recurrence :: Dimension RecurrenceData
   Email :: Dimension EmailData
   Numeral :: Dimension NumeralData
   Ordinal :: Dimension OrdinalData
@@ -121,6 +123,7 @@ instance Show (Dimension a) where
   show CreditCardNumber = "CreditCardNumber"
   show Distance = "Distance"
   show Duration = "Duration"
+  show Recurrence = "Recurrence"
   show Email = "Email"
   show AmountOfMoney = "AmountOfMoney"
   show Numeral = "Numeral"
@@ -161,6 +164,7 @@ instance Hashable (Dimension a) where
   hashWithSalt s Volume              = hashWithSalt s (13::Int)
   hashWithSalt s (CustomDimension _) = hashWithSalt s (14::Int)
   hashWithSalt s CreditCardNumber    = hashWithSalt s (15::Int)
+  hashWithSalt s Recurrence          = hashWithSalt s (16::Int)
 
 instance GEq Dimension where
   geq RegexMatch RegexMatch = Just Refl
@@ -171,6 +175,8 @@ instance GEq Dimension where
   geq Distance _ = Nothing
   geq Duration Duration = Just Refl
   geq Duration _ = Nothing
+  geq Recurrence Recurrence = Just Refl
+  geq Recurrence _ = Nothing
   geq Email Email = Just Refl
   geq Email _ = Nothing
   geq AmountOfMoney AmountOfMoney = Just Refl

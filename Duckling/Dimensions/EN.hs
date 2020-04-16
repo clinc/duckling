@@ -15,6 +15,7 @@ allDimensions :: [Some Dimension]
 allDimensions =
   [ This Distance
   , This Duration
+  , This Recurrence
   , This Numeral
   , This Ordinal
   , This Quantity

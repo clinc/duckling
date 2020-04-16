@@ -1409,7 +1409,7 @@ ruleMonths = mkRuleMonthsWithLatent
   , ( "February" , "february|feb\\.?"   , False )
   , ( "March"    , "march|mar\\.?"      , False )
   , ( "April"    , "april|apr\\.?"      , False )
-  , ( "May"      , "may"                , True  )
+  , ( "May"      , "may"                , False )
   , ( "June"     , "june|jun\\.?"       , False )
   , ( "July"     , "july|jul\\.?"       , False )
   , ( "August"   , "august|aug\\.?"     , False )
@@ -1445,13 +1445,14 @@ ruleEndOrBeginningOfMonth :: Rule
 ruleEndOrBeginningOfMonth = Rule
   { name = "at the beginning|end of <named-month>"
   , pattern =
-    [ regex "(at the )?(beginning|end) of"
+    [ regex "(at the )?(beginning|start|end) of"
     , Predicate isAMonth
     ]
   , prod = \tokens -> case tokens of
       (Token RegexMatch (GroupMatch (_:match:_)):Token Time td:_) -> do
         (sd, ed) <- case Text.toLower match of
           "beginning" -> Just (1, 10)
+          "start"     -> Just (1, 10)
           "end"       -> Just (21, -1)
           _           -> Nothing
         start <- intersect td $ dayOfMonth sd
@@ -1485,7 +1486,7 @@ ruleEndOfMonth = Rule
 ruleBeginningOfMonth :: Rule
 ruleBeginningOfMonth = Rule
   { name = "beginning of month"
-  , pattern = [ regex "((at )?the )?(BOM|beginning of (the )?month)" ]
+  , pattern = [ regex "((at )?the )?(BOM|SOM|(beginning|start) of (the )?month)" ]
   , prod = \_ -> do
       start <- intersect (dayOfMonth 1) $ cycleNth TG.Month 0
       end <- intersect (dayOfMonth 10) $ cycleNth TG.Month 0
@@ -1496,13 +1497,14 @@ ruleEndOrBeginningOfYear :: Rule
 ruleEndOrBeginningOfYear = Rule
   { name = "at the beginning|end of <year>"
   , pattern =
-    [ regex "(at the )?(beginning|end) of"
+    [ regex "(at the )?(beginning|start|end) of"
     , Predicate $ isGrainOfTime TG.Year
     ]
   , prod = \tokens -> case tokens of
       (Token RegexMatch (GroupMatch (_:match:_)):Token Time td:_) -> do
         (sd, ed) <- case Text.toLower match of
           "beginning" -> Just (1, 4)
+          "start"     -> Just (1, 4)
           "end"       -> Just (9, -1)
           _           -> Nothing
         start <- intersect td $ month sd
@@ -1533,7 +1535,7 @@ ruleEndOfYear = Rule
 ruleBeginningOfYear :: Rule
 ruleBeginningOfYear = Rule
   { name = "beginning of year"
-  , pattern = [ regex "((at )?the )?(BOY|beginning of (the )?year)" ]
+  , pattern = [ regex "((at )?the )?(BOY|SOY|(beginning|start) of (the )?year)" ]
   , prod = \_ -> do
       start <- intersect (month 1) $ cycleNth TG.Year 0
       end <- intersect (month 4) $ cycleNth TG.Year 0
@@ -1542,7 +1544,7 @@ ruleBeginningOfYear = Rule
 
 ruleEndOrBeginningOfWeek :: Rule
 ruleEndOrBeginningOfWeek = Rule
-  { name = "at the beginning|end of <week>"
+  { name = "at the beginning|start|end of <week>"
   , pattern =
     [ regex "(at the )?(beginning|end) of"
     , Predicate $ isGrainOfTime TG.Week
@@ -1551,6 +1553,7 @@ ruleEndOrBeginningOfWeek = Rule
       (Token RegexMatch (GroupMatch (_:match1:_)):Token Time td:_) -> do
         (sd, ed) <- case Text.toLower match1 of
           "beginning" -> Just (1, 3)
+          "start"     -> Just (1, 3)
           "end"       -> Just (5, 7)
           _           -> Nothing
         start <- intersect td $ dayOfWeek sd

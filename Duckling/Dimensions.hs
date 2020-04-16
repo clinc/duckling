@@ -81,6 +81,7 @@ dependents :: Some Dimension -> HashSet (Some Dimension)
 dependents (This CreditCardNumber) = HashSet.empty
 dependents (This Distance) = HashSet.singleton (This Numeral)
 dependents (This Duration) = HashSet.fromList [This Numeral, This TimeGrain]
+dependents (This Recurrence) = HashSet.fromList [This Numeral, This TimeGrain]
 dependents (This Numeral) = HashSet.empty
 dependents (This Email) = HashSet.empty
 dependents (This AmountOfMoney) = HashSet.singleton (This Numeral)
