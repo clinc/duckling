@@ -240,37 +240,26 @@ ruleCompositeDuration = Rule
       _ -> Nothing
   }
 
--- Clinc specify rule. Weekly test.
-ruleDurationDaily :: Rule
-ruleDurationDaily = Rule
-  { name = "daily"
+ruleCompositeDurationAnd :: Rule
+ruleCompositeDurationAnd = Rule
+  { name = "composite <duration> and <duration>"
   , pattern =
-    [ regex "daily|(every day)|(per day)"
+    [ dimension Duration
+    , regex ",|and"
+    , dimension Duration
     ]
-  , prod = \_ -> Just . Token Duration $ duration TG.Day 1
-  }
-
-ruleDurationWeekly :: Rule
-ruleDurationWeekly = Rule
-  { name = "weekly"
-  , pattern =
-    [ regex "weekly|(every week)|(per week)"
-    ]
-  , prod = \_ -> Just . Token Duration $ duration TG.Week 1
-  }
-
-ruleDurationYearly :: Rule
-ruleDurationYearly = Rule
-  { name = "yearly"
-  , pattern =
-    [ regex "yearly|(every year)|(per year)"
-    ]
-  , prod = \_ -> Just . Token Duration $ duration TG.Year 1
+  , prod = \case
+      (Token Duration DurationData{TDuration.value = v, TDuration.grain = g}:
+       _:
+       Token Duration dd@DurationData{TDuration.grain = dg}:
+       _) | g > dg -> Just . Token Duration $ duration g (v) <> dd
+      _ -> Nothing
   }
 
 rules :: [Rule]
 rules =
-  [ ruleDurationQuarterOfAnHour
+  [ ruleCompositeDurationCommasAnd
+  , ruleDurationQuarterOfAnHour
   , ruleDurationHalfAnHourAbbrev
   , ruleDurationThreeQuartersOfAnHour
   , ruleDurationFortnight
@@ -285,9 +274,5 @@ rules =
   , ruleDurationPrecision
   , ruleNumeralQuotes
   , ruleCompositeDuration
-  , ruleCompositeDurationCommasAnd
-  -- clinc 
-  , ruleDurationDaily
-  , ruleDurationWeekly
-  , ruleDurationYearly
+  , ruleCompositeDurationAnd
   ]
