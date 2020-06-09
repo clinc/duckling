@@ -2476,6 +2476,15 @@ ruleIntervalDashTimezone = Rule
       _ -> Nothing
   }
 
+ruleMidDay :: Rule
+ruleMidDay = Rule
+  { name = "Mid-day"
+  , pattern =
+    [ regex "(the )?mid(\\s)?day"
+    ]
+  , prod = \_ -> tt $ hour False 12
+  }
+
 rules :: [Rule]
 rules =
   [ ruleIntersect
@@ -2609,6 +2618,7 @@ rules =
   , ruleBeginningOfYear
   , ruleClosest
   , ruleNthClosest
+  , ruleMidDay
   ]
   ++ ruleInstants
   ++ ruleDaysOfWeek
