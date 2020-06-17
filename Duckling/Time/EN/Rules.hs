@@ -2002,7 +2002,7 @@ ruleCycleThisLastNext :: Rule
 ruleCycleThisLastNext = Rule
   { name = "this|last|next <cycle>"
   , pattern =
-    [ regex "(this|current|coming|next|(the( following)?)|last|past|previous)"
+    [ regex "(this|current|coming|next|(the( following)?)|last|past|previous|upcoming)"
     , dimension TimeGrain
     ]
   , prod = \tokens -> case tokens of
@@ -2015,6 +2015,7 @@ ruleCycleThisLastNext = Rule
           "past"          -> tt . cycleNth grain $ - 1
           "previous"      -> tt . cycleNth grain $ - 1
           "next"          -> tt $ cycleNth grain 1
+          "upcoming"      -> tt $ cycleNth grain 1
           "the following" -> tt $ cycleNth grain 1
           "the"           -> tt $ cycleNth grain 0
           _ -> Nothing
@@ -2485,6 +2486,38 @@ ruleMidDay = Rule
   , prod = \_ -> tt $ hour False 12
   }
 
+ruleUpcomingGrain :: Rule
+ruleUpcomingGrain = Rule
+  { name = "upcoming <integer> <cycle>"
+  , pattern =
+    [ regex "upcoming"
+    , Predicate isNatural
+    , dimension TimeGrain
+    ]
+  , prod = \case
+      ( _:
+        Token Numeral NumeralData{ TNumeral.value = numOfTimeGrain }:
+        Token TimeGrain grain:
+        _) -> tt $ cycleNth grain $ floor numOfTimeGrain
+      _ -> Nothing
+  }
+
+ruleUpcomingGrainAlt :: Rule
+ruleUpcomingGrainAlt = Rule
+  { name = "<integer> upcoming <cycle>"
+  , pattern =
+    [ Predicate isNatural
+    , regex "upcoming"
+    , dimension TimeGrain
+    ]
+  , prod = \case
+      ( Token Numeral NumeralData{ TNumeral.value = numOfTimeGrain }:
+        _:
+        Token TimeGrain grain:
+        _) -> tt $ cycleNth grain $ floor numOfTimeGrain
+      _ -> Nothing
+  }
+
 rules :: [Rule]
 rules =
   [ ruleIntersect
@@ -2619,6 +2652,8 @@ rules =
   , ruleClosest
   , ruleNthClosest
   , ruleMidDay
+  , ruleUpcomingGrain
+  , ruleUpcomingGrainAlt
   ]
   ++ ruleInstants
   ++ ruleDaysOfWeek
