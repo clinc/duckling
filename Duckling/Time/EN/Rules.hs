@@ -15,7 +15,6 @@ module Duckling.Time.EN.Rules where
 
 import Control.Applicative ((<|>))
 import Data.Maybe
-import Data.Text (Text)
 import Prelude
 import qualified Data.Text as Text
 
@@ -218,6 +217,28 @@ ruleTimeBeforeLastAfterNext = Rule
       _ -> Nothing
   }
 
+ruleOrdinalDOWOfTime :: Rule
+ruleOrdinalDOWOfTime = Rule
+  { name = "first|second|third|fourth|fifth <day-of-week> of <time>"
+  , pattern =
+    [ Predicate $ isOrdinalBetween 1 5
+    , Predicate isADayOfWeek
+    , regex "(of|in)"
+    , dimension Time
+    ]
+  , prod = \case
+      (
+        token:
+        Token Time td1:
+        _:
+        Token Time td2:
+        _) -> do
+          ord <- getIntValue token
+          td <- Just $ predNthAfter (ord-1) td1 td2
+          tt td
+      _ -> Nothing
+  }
+
 ruleLastDOWOfTime :: Rule
 ruleLastDOWOfTime = Rule
   { name = "last <day-of-week> of <time>"
@@ -227,9 +248,13 @@ ruleLastDOWOfTime = Rule
     , regex "(of|in)"
     , dimension Time
     ]
-  , prod = \tokens -> case tokens of
-      (_:Token Time td1:_:Token Time td2:_) ->
-        tt $ predLastOf td1 td2
+  , prod = \case
+      (
+        _:
+        Token Time td1:
+        _:
+        Token Time td2:
+        _) -> tt $ predLastOf td1 td2
       _ -> Nothing
   }
 
@@ -2571,6 +2596,7 @@ rules =
   , ruleThisTime
   , ruleLastTime
   , ruleTimeBeforeLastAfterNext
+  , ruleOrdinalDOWOfTime
   , ruleLastDOWOfTime
   , ruleLastCycleOfTime
   , ruleLastNight
