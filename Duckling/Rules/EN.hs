@@ -35,6 +35,7 @@ import qualified Duckling.AmountOfMoney.EN.ZA.Rules as AmountOfMoneyZA
 import qualified Duckling.Distance.EN.Rules as Distance
 import qualified Duckling.Duration.EN.Rules as Duration
 import qualified Duckling.Recurrence.EN.Rules as Recurrence
+import qualified Duckling.Position.EN.Rules as Position
 import qualified Duckling.Email.EN.Rules as Email
 import qualified Duckling.Numeral.EN.Rules as Numeral
 import qualified Duckling.Ordinal.EN.Rules as Ordinal
@@ -94,6 +95,7 @@ langRules (This CreditCardNumber) = []
 langRules (This Distance) = Distance.rules
 langRules (This Duration) = Duration.rules
 langRules (This Recurrence) = Recurrence.rules
+langRules (This Position) = Position.rules
 langRules (This Email) = Email.rules
 langRules (This Numeral) = Numeral.rules
 langRules (This Ordinal) = Ordinal.rules

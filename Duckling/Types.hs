@@ -51,13 +51,14 @@ import Duckling.AmountOfMoney.Types (AmountOfMoneyData)
 import Duckling.CreditCardNumber.Types (CreditCardNumberData)
 import Duckling.Distance.Types (DistanceData)
 import Duckling.Duration.Types (DurationData)
-import Duckling.Recurrence.Types (RecurrenceData)
 import Duckling.Email.Types (EmailData)
 import Duckling.Locale
 import Duckling.Numeral.Types (NumeralData)
 import Duckling.Ordinal.Types (OrdinalData)
 import Duckling.PhoneNumber.Types (PhoneNumberData)
+import Duckling.Position.Types (PositionData)
 import Duckling.Quantity.Types (QuantityData)
+import Duckling.Recurrence.Types (RecurrenceData)
 import Duckling.Regex.Types
 import Duckling.Resolve
 import Duckling.Temperature.Types (TemperatureData)
@@ -104,12 +105,13 @@ data Dimension a where
   CreditCardNumber :: Dimension CreditCardNumberData
   Distance :: Dimension DistanceData
   Duration :: Dimension DurationData
-  Recurrence :: Dimension RecurrenceData
   Email :: Dimension EmailData
   Numeral :: Dimension NumeralData
   Ordinal :: Dimension OrdinalData
   PhoneNumber :: Dimension PhoneNumberData
+  Position :: Dimension PositionData
   Quantity :: Dimension QuantityData
+  Recurrence :: Dimension RecurrenceData
   Temperature :: Dimension TemperatureData
   Time :: Dimension TimeData
   TimeGrain :: Dimension Grain
@@ -123,13 +125,14 @@ instance Show (Dimension a) where
   show CreditCardNumber = "CreditCardNumber"
   show Distance = "Distance"
   show Duration = "Duration"
-  show Recurrence = "Recurrence"
   show Email = "Email"
   show AmountOfMoney = "AmountOfMoney"
   show Numeral = "Numeral"
   show Ordinal = "Ordinal"
   show PhoneNumber = "PhoneNumber"
+  show Position = "Position"
   show Quantity = "Quantity"
+  show Recurrence = "Recurrence"
   show Temperature = "Temperature"
   show Time = "Time"
   show TimeGrain = "TimeGrain"
@@ -165,6 +168,7 @@ instance Hashable (Dimension a) where
   hashWithSalt s (CustomDimension _) = hashWithSalt s (14::Int)
   hashWithSalt s CreditCardNumber    = hashWithSalt s (15::Int)
   hashWithSalt s Recurrence          = hashWithSalt s (16::Int)
+  hashWithSalt s Position            = hashWithSalt s (17::Int)
 
 instance GEq Dimension where
   geq RegexMatch RegexMatch = Just Refl
@@ -175,8 +179,6 @@ instance GEq Dimension where
   geq Distance _ = Nothing
   geq Duration Duration = Just Refl
   geq Duration _ = Nothing
-  geq Recurrence Recurrence = Just Refl
-  geq Recurrence _ = Nothing
   geq Email Email = Just Refl
   geq Email _ = Nothing
   geq AmountOfMoney AmountOfMoney = Just Refl
@@ -187,8 +189,12 @@ instance GEq Dimension where
   geq Ordinal _ = Nothing
   geq PhoneNumber PhoneNumber = Just Refl
   geq PhoneNumber _ = Nothing
+  geq Position Position = Just Refl
+  geq Position _ = Nothing
   geq Quantity Quantity = Just Refl
   geq Quantity _ = Nothing
+  geq Recurrence Recurrence = Just Refl
+  geq Recurrence _ = Nothing
   geq Temperature Temperature = Just Refl
   geq Temperature _ = Nothing
   geq Time Time = Just Refl

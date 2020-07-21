@@ -26,6 +26,7 @@ import Duckling.Duration.Types (DurationData (..))
 import Duckling.Recurrence.Types (RecurrenceData(..))
 import Duckling.Numeral.Helpers (parseInt, parseInteger)
 import Duckling.Numeral.Types (NumeralData(..))
+import Duckling.Time.Helpers (getIntValue)
 import Duckling.Time.Types (TimeData(..))
 import Duckling.Regex.Types
 import Duckling.Types
@@ -70,6 +71,45 @@ ruleRecurrenceEveryNumeral = Rule
       _ -> Nothing
   }
 
+ruleRecurrenceEveryOrdinal :: Rule
+ruleRecurrenceEveryOrdinal = Rule
+  { name = "every|per|each <time/duration/unit-of-time>"
+  , pattern =
+    [ regex "every|per|each"
+    , dimension Ordinal
+    , Predicate recurrentDimension
+    ]
+  , prod = \tokens -> case tokens of
+      (_:ord:Token Time TimeData{TTime.timeGrain}:_) -> do
+        value <- getIntValue ord
+        Just . Token Recurrence $ recurrence timeGrain value
+      (_:ord:Token Duration DurationData{TDuration.grain, TDuration.value}:_) -> do
+        value <- getIntValue ord
+        Just . Token Recurrence $ recurrence grain value
+      (_:ord:Token TimeGrain grain:_) -> do
+        value <- getIntValue ord
+        Just . Token Recurrence $ recurrence grain value
+      _ -> Nothing
+  }
+
+ruleRecurrenceEveryOther :: Rule
+ruleRecurrenceEveryOther = Rule
+  { name = "every|per|each other|alternating <time/duration/unit-of-time>"
+  , pattern =
+    [ regex "every|per|each"
+    , regex "other|alternating"
+    , Predicate recurrentDimension
+    ]
+  , prod = \tokens -> case tokens of
+      (_:_:Token Time TimeData{TTime.timeGrain}:_) ->
+        Just . Token Recurrence $ recurrence timeGrain 2
+      (_:_:Token Duration DurationData{TDuration.grain, TDuration.value}:_) ->
+        Just . Token Recurrence $ recurrence grain 2
+      (_:_:Token TimeGrain grain:_) ->
+        Just . Token Recurrence $ recurrence grain 2
+      _ -> Nothing
+  }
+
 ruleRecurrenceLy :: Rule
 ruleRecurrenceLy = Rule
   { name = "hourly|daily|weekly|monthly|yearly"
@@ -101,5 +141,7 @@ rules :: [Rule]
 rules =
   [ ruleRecurrenceEvery
   , ruleRecurrenceEveryNumeral
+  , ruleRecurrenceEveryOrdinal
+  , ruleRecurrenceEveryOther
   , ruleRecurrenceLy
   ]

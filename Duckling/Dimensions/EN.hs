@@ -16,6 +16,7 @@ allDimensions =
   [ This Distance
   , This Duration
   , This Recurrence
+  , This Position
   , This Numeral
   , This Ordinal
   , This Quantity

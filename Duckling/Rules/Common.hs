@@ -31,6 +31,7 @@ rules (This CreditCardNumber) = CreditCardNumber.rules
 rules (This Distance) = Distance.rules
 rules (This Duration) = Duration.rules
 rules (This Recurrence) = []
+rules (This Position) = []
 rules (This Email) = Email.rules
 rules (This Numeral) = Numeral.rules
 rules (This Ordinal) = []

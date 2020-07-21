@@ -32,6 +32,7 @@ langRules (This CreditCardNumber) = []
 langRules (This Distance) = []
 langRules (This Duration) = []
 langRules (This Recurrence) = []
+langRules (This Position) = []
 langRules (This Numeral) = Numeral.rules
 langRules (This Email) = []
 langRules (This Ordinal) = Ordinal.rules

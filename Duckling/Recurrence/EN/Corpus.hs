@@ -55,11 +55,6 @@ allExamples = concat
              , "per day"
              , "daily"
              ]
-  , examples (RecurrenceData 1 Day Nothing)
-             [ "every day"
-             , "per day"
-             , "daily"
-             ]
   , examples (RecurrenceData 2 Day Nothing)
              [ "every 2 days"
              , "per 2 days"
@@ -75,9 +70,9 @@ allExamples = concat
              , "biweekly"
              ]
   , examples (RecurrenceData 1 Month Nothing)
-             [ "every week"
-             , "per week"
-             , "weekly"
+             [ "every month"
+             , "per month"
+             , "monthly"
              ]
   , examples (RecurrenceData 1 Year Nothing)
              [ "every year"

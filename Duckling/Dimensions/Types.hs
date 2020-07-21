@@ -32,6 +32,7 @@ toName CreditCardNumber = "credit-card-number"
 toName Distance = "distance"
 toName Duration = "duration"
 toName Recurrence = "recurrence"
+toName Position = "position"
 toName Email = "email"
 toName AmountOfMoney = "amount-of-money"
 toName Numeral = "number"
@@ -54,6 +55,7 @@ fromName name = HashMap.lookup name m
       , ("distance", This Distance)
       , ("duration", This Duration)
       , ("recurrence", This Recurrence)
+      , ("position", This Position)
       , ("email", This Email)
       , ("number", This Numeral)
       , ("ordinal", This Ordinal)

@@ -375,6 +375,12 @@ library
                      , Duckling.Recurrence.Helpers
                      , Duckling.Recurrence.Types
 
+                     -- Position
+                     , Duckling.Position.EN.Corpus
+                     , Duckling.Position.EN.Rules
+                     , Duckling.Position.Helpers
+                     , Duckling.Position.Types
+
                      -- Email
                      , Duckling.Email.DE.Corpus
                      , Duckling.Email.DE.Rules
