@@ -114,7 +114,7 @@ ruleCent :: Rule
 ruleCent = Rule
   { name = "cent"
   , pattern =
-    [ regex "cents?|penn(y|ies)|pence|sens?"
+    [ regex "(cent|coin|dubloon|pence|sen)s?|penn(y|ies)"
     ]
   , prod = \_ -> Just . Token AmountOfMoney $ currencyOnly Cent
   }
@@ -123,7 +123,7 @@ ruleBucks :: Rule
 ruleBucks = Rule
   { name = "bucks"
   , pattern =
-    [ regex "bucks?"
+    [ regex "(buck|stack|greenback|clam|bill|bone|ace|single|smacker(oonie|oo)?|jawn)s?"
     ]
   , prod = \_ -> Just . Token AmountOfMoney $ currencyOnly Unnamed
   }

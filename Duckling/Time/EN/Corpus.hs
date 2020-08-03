@@ -238,6 +238,7 @@ allExamples = concat
              , "first of march"
              , "the first of march"
              , "march first"
+             , "march the first"
              ]
   , examples (datetime (2013, 3, 2, 0, 0, 0) Day)
              [ "the 2nd of march"

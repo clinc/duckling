@@ -48,7 +48,7 @@ instance Resolve PositionData where
 instance ToJSON PositionData where
   toJSON PositionData {value, index, anchor} = object
     [ "type" .= ("value" :: Text)
-    , "value" .= value
-    , "index" .= index
+    , "span" .= value
+    , "offset" .= index
     , "anchor" .= anchor
     ]

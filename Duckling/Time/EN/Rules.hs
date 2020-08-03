@@ -47,7 +47,7 @@ ruleIntersect = Rule
   , prod = \tokens -> case tokens of
       (Token Time td1:Token Time td2:_)
         | (not $ TTime.latent td1) || (not $ TTime.latent td2) ->
-        Token Time . notLatent <$> intersect td1 td2
+        Token Time <$> intersect td1 td2
       _ -> Nothing
   }
 
@@ -416,6 +416,19 @@ ruleNamedDOMOrdinal = Rule
     ]
   , prod = \tokens -> case tokens of
       (Token Time td:token:_) -> Token Time <$> intersectDOM td token
+      _ -> Nothing
+  }
+
+ruleNamedDOMTheOrdinal :: Rule
+ruleNamedDOMTheOrdinal = Rule
+  { name = "<named-month>|<named-day> <day-of-month> the (ordinal)"
+  , pattern =
+    [ Predicate $ or . sequence [isAMonth, isADayOfWeek]
+    , regex "the"
+    , Predicate isDOMOrdinal
+    ]
+  , prod = \tokens -> case tokens of
+      (Token Time td:_:token:_) -> Token Time <$> intersectDOM td token
       _ -> Nothing
   }
 
@@ -1195,9 +1208,9 @@ ruleIntervalFromDDDDMonth :: Rule
 ruleIntervalFromDDDDMonth = Rule
   { name = "from the <day-of-month> (ordinal or number) to the <day-of-month> (ordinal or number) <named-month> (interval)"
   , pattern =
-    [ regex "(from|between)( the)?"
+    [ regex "(from|between|since)( the)?"
     , Predicate isDOMValue
-    , regex "\\-|to( the)?|and( the)?|th?ru|through|(un)?til(l)?"
+    , regex "(\\-|to( the)?|and( the)?|th?ru|through|(un)?til(l)?)( the)?"
     , Predicate isDOMValue
     , Predicate isAMonth
     ]
@@ -1218,9 +1231,9 @@ ruleIntervalFromDDDDOfMonth :: Rule
 ruleIntervalFromDDDDOfMonth = Rule
   { name = "from the <day-of-month> (ordinal or number) to the <day-of-month> (ordinal or number) of <named-month> (interval)"
   , pattern =
-    [ regex "from( the)?"
+    [ regex "(from|between|since)( the)?"
     , Predicate isDOMValue
-    , regex "\\-|to( the)?|th?ru|through|(un)?til(l)?"
+    , regex "(\\-|to( the)?|and( the)?|th?ru|through|(un)?til(l)?)( the)?"
     , Predicate isDOMValue
     , regex "of"
     , Predicate isAMonth
@@ -1232,6 +1245,31 @@ ruleIntervalFromDDDDOfMonth = Rule
        token2:
        _:
        Token Time td:
+       _) -> do
+        dom1 <- intersectDOM td token1
+        dom2 <- intersectDOM td token2
+        Token Time <$> interval TTime.Closed dom1 dom2
+      _ -> Nothing
+  }
+
+ruleIntervalFromOfMonthDDDD :: Rule
+ruleIntervalFromOfMonthDDDD = Rule
+  { name = "from the <day-of-month> (ordinal or number) of <named-month> (interval) to the <day-of-month> (ordinal or number)"
+  , pattern =
+    [ regex "(from|between|since)( the)?"
+    , Predicate isDOMValue
+    , regex "of"
+    , Predicate isAMonth
+    , regex "(\\-|to( the)?|and( the)?|th?ru|through|(un)?til(l)?)( the)?"
+    , Predicate isDOMValue
+    ]
+  , prod = \tokens -> case tokens of
+      (_:
+       token1:
+       _:
+       Token Time td:
+       _:
+       token2:
        _) -> do
         dom1 <- intersectDOM td token1
         dom2 <- intersectDOM td token2
@@ -2600,6 +2638,7 @@ rules =
   , ruleTheDOMOrdinal
   , ruleDOMLatent
   , ruleNamedDOMOrdinal
+  , ruleNamedDOMTheOrdinal
   , ruleMonthDOMNumeral
   , ruleDOMMonth
   , ruleDOMOfMonth
@@ -2651,6 +2690,7 @@ rules =
   , ruleIntervalFromMonthDDDD
   , ruleIntervalFromDDDDMonth
   , ruleIntervalFromDDDDOfMonth
+  , ruleIntervalFromOfMonthDDDD
   , ruleIntervalMonthDDDD
   , ruleIntervalDDDDMonth
   , ruleIntervalDash

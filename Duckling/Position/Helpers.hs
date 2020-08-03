@@ -12,6 +12,8 @@ module Duckling.Position.Helpers
   , isNatural
   , position
   , isNotMiddle
+  , ordMulEnd
+  , ordMulStart
   ) where
 
 import Prelude
@@ -30,3 +32,9 @@ position i v a = PositionData {TPosition.value = v, TPosition.index = i, TPositi
 isNotMiddle :: Predicate
 isNotMiddle (Token Position PositionData {anchor = TPosition.Middle}) = False
 isNotMiddle _ = False
+
+ordMulEnd :: Int -> Double -> Maybe Int
+ordMulEnd o v = Just (- (floor v) * o)
+
+ordMulStart :: Int -> Double -> Maybe Int
+ordMulStart o v = Just (((floor v) * o) - (floor v))

@@ -1224,6 +1224,25 @@ classifiers
                    koData =
                      ClassData{prior = -infinity, unseen = -1.3862943611198906,
                                likelihoods = HashMap.fromList [], n = 0}}),
+       ("<integer> <unit-of-duration>",
+        Classifier{okData =
+                     ClassData{prior = -infinity, unseen = -2.3978952727983707,
+                               likelihoods = HashMap.fromList [], n = 0},
+                   koData =
+                     ClassData{prior = 0.0, unseen = -3.8501476017100584,
+                               likelihoods =
+                                 HashMap.fromList
+                                   [("integer 10minute (grain)", -2.4423470353692043),
+                                    ("year", -2.7300291078209855),
+                                    ("integer 10year (grain)", -2.7300291078209855),
+                                    ("integer (20..90)minute (grain)", -2.4423470353692043),
+                                    ("month", -2.7300291078209855),
+                                    ("integer (numeric)minute (grain)", -2.4423470353692043),
+                                    ("integer (numeric)month (grain)", -2.7300291078209855),
+                                    ("minute", -1.120591195386885),
+                                    ("integer 21..99minute (grain)", -2.7300291078209855),
+                                    ("integer (13..19)minute (grain)", -2.4423470353692043)],
+                               n = 18}}),
        ("dual <unit-of-duration>",
         Classifier{okData =
                      ClassData{prior = 0.0, unseen = -1.6094379124341003,
@@ -1553,12 +1572,13 @@ classifiers
                                     ("daymonth", -2.3513752571634776),
                                     ("single <unit-of-duration>in <named-month>",
                                      -2.3513752571634776),
-                                    ("<> <unit-of-duration>part of days", -2.3513752571634776),
                                     ("single <unit-of-duration>part of days", -2.3513752571634776),
                                     ("minutehour", -1.9459101490553135),
                                     ("single <unit-of-duration>month (integer)",
                                      -2.3513752571634776),
-                                    ("secondmonth", -1.9459101490553135)],
+                                    ("secondmonth", -1.9459101490553135),
+                                    ("<integer> <unit-of-duration>part of days",
+                                     -2.3513752571634776)],
                                n = 5}}),
        ("\1593\1610\1583 \1575\1604\1605\1610\1604\1575\1583",
         Classifier{okData =
@@ -1914,25 +1934,6 @@ classifiers
                                     ("integer 3", -2.1972245773362196),
                                     ("integer 5", -2.1972245773362196)],
                                n = 14}}),
-       ("<> <unit-of-duration>",
-        Classifier{okData =
-                     ClassData{prior = -infinity, unseen = -2.3978952727983707,
-                               likelihoods = HashMap.fromList [], n = 0},
-                   koData =
-                     ClassData{prior = 0.0, unseen = -3.8501476017100584,
-                               likelihoods =
-                                 HashMap.fromList
-                                   [("integer 10minute (grain)", -2.4423470353692043),
-                                    ("year", -2.7300291078209855),
-                                    ("integer 10year (grain)", -2.7300291078209855),
-                                    ("integer (20..90)minute (grain)", -2.4423470353692043),
-                                    ("month", -2.7300291078209855),
-                                    ("integer (numeric)minute (grain)", -2.4423470353692043),
-                                    ("integer (numeric)month (grain)", -2.7300291078209855),
-                                    ("minute", -1.120591195386885),
-                                    ("integer 21..99minute (grain)", -2.7300291078209855),
-                                    ("integer (13..19)minute (grain)", -2.4423470353692043)],
-                               n = 18}}),
        ("single <unit-of-duration>",
         Classifier{okData =
                      ClassData{prior = -4.2626798770413155,

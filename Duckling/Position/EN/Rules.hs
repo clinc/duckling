@@ -24,6 +24,7 @@ import Duckling.Dimensions.Types
 import Duckling.Numeral.Helpers (parseInt)
 import Duckling.Position.Types (PositionData(..))
 import Duckling.Numeral.Types (NumeralData(..))
+import Duckling.Ordinal.Types (OrdinalData(..))
 import Duckling.Ordinal.Helpers
 import Duckling.Position.Helpers
 import Duckling.Regex.Types
@@ -41,8 +42,8 @@ ruleOrdFromStart = Rule
     , regex "(from |relative to |on |in |at |to |of )?(the )?(beginning|start|first|top|left)"
     ]
   , prod = \tokens -> case tokens of
-      (Token Ordinal od:_:_) -> 
-        Just . Token Position $ position (TOrdinal.value od - 1) 1 TPosition.Start
+      (Token Ordinal OrdinalData{TOrdinal.value = o}:_:_) -> 
+        Just . Token Position $ position (o - 1) 1 TPosition.Start
       _ -> Nothing
     }
 
@@ -54,8 +55,8 @@ ruleOrdFromEnd = Rule
     , regex "(from |relative to |on |in |at |to |of )?(the )?(right|bottom|end|last)"
     ]
   , prod = \tokens -> case tokens of
-      (Token Ordinal od:_:_) -> 
-        Just . Token Position $ position (- TOrdinal.value od) 1 TPosition.End
+      (Token Ordinal OrdinalData{TOrdinal.value = o}:_:_) -> 
+        Just . Token Position $ position (- o) 1 TPosition.End
       _ -> Nothing
     }
 
@@ -80,8 +81,8 @@ ruleNumFromEnd = Rule
     , regex "(from |relative to |on |in |at |to |of )?(the )?(right|bottom|end|last)"
     ]
   , prod = \tokens -> case tokens of
-      (Token Numeral NumeralData{TNumeral.value = v}:_:_) -> 
-        Just . Token Position $ position (- 1) (floor v) TPosition.End
+      (Token Numeral NumeralData{TNumeral.value = v}:_:_) ->
+        Just . Token Position $ position (- (floor v)) (floor v) TPosition.End
       _ -> Nothing
     }
 
@@ -94,8 +95,9 @@ ruleOrdNumFromStart = Rule
     , regex "(from |relative to |on |in |at |to |of )?(the )?(beginning|start|first|top|left(hand)?)"
     ]
   , prod = \tokens -> case tokens of
-      (Token Ordinal od:Token Numeral NumeralData{TNumeral.value = v}:_:_) ->
-        Just . Token Position $ position (TOrdinal.value od - 1) (floor v) TPosition.Start
+      (Token Ordinal OrdinalData{TOrdinal.value = o}:Token Numeral NumeralData{TNumeral.value = v}:_:_) -> do
+        start <- ordMulStart o v
+        Just . Token Position $ position start (floor v) TPosition.Start
       _ -> Nothing
     }
 
@@ -108,8 +110,9 @@ ruleOrdNumFromEnd = Rule
     , regex "(from |relative to |on |in |at |to |of )?(the )?(right(hand)?|bottom|end|last)"
     ]
   , prod = \tokens -> case tokens of
-      (Token Ordinal od:Token Numeral NumeralData{TNumeral.value = v}:_:_) ->
-        Just . Token Position $ position (- TOrdinal.value od) (floor v) TPosition.End
+      (Token Ordinal OrdinalData{TOrdinal.value = o}:Token Numeral NumeralData{TNumeral.value = v}:_:_) -> do
+        start <- ordMulEnd o v
+        Just . Token Position $ position start (floor v) TPosition.End
       _ -> Nothing
     }
 
@@ -117,7 +120,7 @@ ruleStartingNum :: Rule
 ruleStartingNum = Rule
   { name = "starting <integer>"
   , pattern =
-    [regex "(starting|left(most)?|top(most)?|first|beginning|highest)"
+    [regex "(starting|left(most)?|top(most)?|beginning|highest)"
     , Predicate isNatural
     ]
   , prod = \tokens -> case tokens of
@@ -134,8 +137,8 @@ ruleEndingNum = Rule
     , Predicate isNatural
     ]
   , prod = \tokens -> case tokens of
-      (_:Token Numeral NumeralData{TNumeral.value = v}:_) -> 
-        Just . Token Position $ position (- 1) (floor v) TPosition.End
+      (_:Token Numeral NumeralData{TNumeral.value = v}:_) -> do
+        Just . Token Position $ position (- (floor v)) (floor v) TPosition.End
       _ -> Nothing
     }
 
@@ -147,8 +150,9 @@ ruleOrdNum = Rule
     , Predicate isNatural
     ]
   , prod = \tokens -> case tokens of
-      (Token Ordinal od:Token Numeral NumeralData{TNumeral.value = v}:_) ->
-        Just . Token Position $ position (TOrdinal.value od - 1) (floor v) TPosition.Start
+      (Token Ordinal OrdinalData{TOrdinal.value = o}:Token Numeral NumeralData{TNumeral.value = v}:_) -> do
+        start <- ordMulStart o v
+        Just . Token Position $ position start (floor v) TPosition.Start
       _ -> Nothing
     }
 
@@ -184,8 +188,8 @@ ruleOrdLast = Rule
     , regex "to last"
     ]
   , prod = \tokens -> case tokens of
-      (Token Ordinal od:_:_) -> 
-        Just . Token Position $ position (- TOrdinal.value od) 1 TPosition.End
+      (Token Ordinal OrdinalData{TOrdinal.value = o}:_:_) -> 
+        Just . Token Position $ position (- o) 1 TPosition.End
       _ -> Nothing
     }
 
@@ -198,8 +202,9 @@ ruleOrdLastNum = Rule
     , Predicate isNatural
     ]
   , prod = \tokens -> case tokens of
-      (Token Ordinal od:_:Token Numeral NumeralData{TNumeral.value = v}:_) -> 
-        Just . Token Position $ position (- TOrdinal.value od) (floor v) TPosition.End
+      (Token Ordinal OrdinalData{TOrdinal.value = o}:_:Token Numeral NumeralData{TNumeral.value = v}:_) -> do
+        start <- ordMulEnd o v
+        Just . Token Position $ position start (floor v) TPosition.End
       _ -> Nothing
     }
 
@@ -212,7 +217,7 @@ ruleNumInMid = Rule
     ]
   , prod = \tokens -> case tokens of
       (Token Numeral NumeralData{TNumeral.value = v}:_:_) -> 
-        Just . Token Position $ position 0 (floor v) TPosition.Middle
+        Just . Token Position $ position (- floor ((v - 1) / 2)) (floor v) TPosition.Middle
       _ -> Nothing
     }
 
@@ -225,7 +230,7 @@ ruleMidNum = Rule
     ]
   , prod = \tokens -> case tokens of
       (_:Token Numeral NumeralData{TNumeral.value = v}:_) -> 
-        Just . Token Position $ position 0 (floor v) TPosition.Middle
+        Just . Token Position $ position (- floor ((v - 1) / 2)) (floor v) TPosition.Middle
       _ -> Nothing
     }
 
@@ -239,8 +244,8 @@ rulePositionOfMid = Rule
   , prod = \tokens -> case tokens of
       (Token Position PositionData{TPosition.index = i, TPosition.value = v, TPosition.anchor = a}:_:_)
         -> case a of
-         TPosition.Start -> Just . Token Position $ position (- i - 1) v TPosition.Middle
-         TPosition.End -> Just . Token Position $ position (- i) v TPosition.Middle
+         TPosition.Start -> Just . Token Position $ position (- i - v) v TPosition.Middle
+         TPosition.End -> Just . Token Position $ position (- i - v + 1) v TPosition.Middle
          _    -> Nothing
       _ -> Nothing
     }
