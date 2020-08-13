@@ -199,36 +199,6 @@ ruleIntersectAndXCents = Rule
       _ -> Nothing
   }
 
-ruleIntersect :: Rule
-ruleIntersect = Rule
-  { name = "intersect"
-  , pattern =
-    [ Predicate isWithoutCents
-    , Predicate isNatural
-    ]
-  , prod = \tokens -> case tokens of
-      (Token AmountOfMoney fd:
-       Token Numeral NumeralData{TNumeral.value = c}:
-       _) -> Just . Token AmountOfMoney $ withCents c fd
-      _ -> Nothing
-  }
-
-ruleIntersectAndNumeral :: Rule
-ruleIntersectAndNumeral = Rule
-  { name = "intersect (and number)"
-  , pattern =
-    [ Predicate isWithoutCents
-    , regex "and"
-    , Predicate isNatural
-    ]
-  , prod = \tokens -> case tokens of
-      (Token AmountOfMoney fd:
-       _:
-       Token Numeral NumeralData{TNumeral.value = c}:
-       _) -> Just . Token AmountOfMoney $ withCents c fd
-      _ -> Nothing
-  }
-
 ruleIntersectXCents :: Rule
 ruleIntersectXCents = Rule
   { name = "intersect (X cents)"
@@ -337,7 +307,7 @@ ruleIntervalMax :: Rule
 ruleIntervalMax = Rule
   { name = "under/less/lower/no more than <amount-of-money>"
   , pattern =
-    [ regex "under|(less|lower|not? more) than"
+    [ regex "under|below|(less|lower|not? more) than"
     , Predicate isSimpleAmountOfMoney
     ]
   , prod = \tokens -> case tokens of
@@ -352,7 +322,7 @@ ruleIntervalMin :: Rule
 ruleIntervalMin = Rule
   { name = "over/above/at least/more than <amount-of-money>"
   , pattern =
-    [ regex "over|above|at least|more than"
+    [ regex "over|above|at least|(more|greater) than"
     , Predicate isSimpleAmountOfMoney
     ]
   , prod = \tokens -> case tokens of
@@ -374,8 +344,6 @@ rules =
   , ruleNumDollarCoins
   , ruleDinars
   , ruleDirham
-  , ruleIntersect
-  , ruleIntersectAndNumeral
   , ruleIntersectAndXCents
   , ruleIntersectXCents
   , ruleIntervalBetweenNumeral

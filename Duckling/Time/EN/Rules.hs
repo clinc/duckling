@@ -1312,7 +1312,7 @@ ruleIntervalFrom :: Rule
 ruleIntervalFrom = Rule
   { name = "from <datetime> - <datetime> (interval)"
   , pattern =
-    [ regex "from"
+    [ regex "(from|since)"
     , dimension Time
     , regex "\\-|to|th?ru|through|(un)?til(l)?"
     , dimension Time
