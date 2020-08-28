@@ -1446,11 +1446,11 @@ ruleIntervalUntilTime = Rule
       _ -> Nothing
   }
 
-ruleIntervalAfterFromSinceTime :: Rule
-ruleIntervalAfterFromSinceTime = Rule
-  { name = "from|since|after <time>"
+ruleIntervalSinceTime :: Rule
+ruleIntervalSinceTime = Rule
+  { name = "since <time>"
   , pattern =
-    [ regex "from|since|after"
+    [ regex "since"
     , dimension Time
     ]
   , prod = \tokens -> case tokens of
@@ -2704,7 +2704,7 @@ rules =
   , ruleIntervalBy
   , ruleIntervalByTheEndOf
   , ruleIntervalUntilTime
-  , ruleIntervalAfterFromSinceTime
+  , ruleIntervalSinceTime
   , ruleIntervalAfterTime
   , ruleIntervalThroughTime
   , ruleCycleTheAfterBeforeTime
