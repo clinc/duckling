@@ -333,6 +333,18 @@ ruleMultiply = Rule
       _ -> Nothing
   }
 
+ruleEndingIn :: Rule
+ruleEndingIn = Rule
+  { name = "ending in <numeral>"
+  , pattern =
+    [regex "ending( in| with)?"
+    ,  dimension Numeral
+    ]
+  , prod = \tokens -> case tokens of
+      (_:Token Numeral nd:_) -> double (TNumeral.value nd)
+      _ -> Nothing
+  }
+
 rules :: [Rule]
 rules =
   [ ruleToNineteen
@@ -351,4 +363,5 @@ rules =
   , ruleSumAnd
   , ruleMultiply
   , ruleDozen
+  , ruleEndingIn
   ]

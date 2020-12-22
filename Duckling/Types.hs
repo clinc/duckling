@@ -55,7 +55,9 @@ import Duckling.Locale
 import Duckling.Numeral.Types (NumeralData)
 import Duckling.Ordinal.Types (OrdinalData)
 import Duckling.PhoneNumber.Types (PhoneNumberData)
+import Duckling.Position.Types (PositionData)
 import Duckling.Quantity.Types (QuantityData)
+import Duckling.Recurrence.Types (RecurrenceData)
 import Duckling.Regex.Types
 import Duckling.Resolve
 import Duckling.Temperature.Types (TemperatureData)
@@ -123,7 +125,9 @@ data Dimension a where
   Numeral :: Dimension NumeralData
   Ordinal :: Dimension OrdinalData
   PhoneNumber :: Dimension PhoneNumberData
+  Position :: Dimension PositionData
   Quantity :: Dimension QuantityData
+  Recurrence :: Dimension RecurrenceData
   Temperature :: Dimension TemperatureData
   Time :: Dimension TimeData
   TimeGrain :: Dimension Grain
@@ -142,7 +146,9 @@ instance Show (Dimension a) where
   show Numeral = "Numeral"
   show Ordinal = "Ordinal"
   show PhoneNumber = "PhoneNumber"
+  show Position = "Position"
   show Quantity = "Quantity"
+  show Recurrence = "Recurrence"
   show Temperature = "Temperature"
   show Time = "Time"
   show TimeGrain = "TimeGrain"
@@ -177,6 +183,8 @@ instance Hashable (Dimension a) where
   hashWithSalt s Volume              = hashWithSalt s (13::Int)
   hashWithSalt s (CustomDimension _) = hashWithSalt s (14::Int)
   hashWithSalt s CreditCardNumber    = hashWithSalt s (15::Int)
+  hashWithSalt s Recurrence          = hashWithSalt s (16::Int)
+  hashWithSalt s Position            = hashWithSalt s (17::Int)
 
 instance GEq Dimension where
   geq RegexMatch RegexMatch = Just Refl
@@ -197,8 +205,12 @@ instance GEq Dimension where
   geq Ordinal _ = Nothing
   geq PhoneNumber PhoneNumber = Just Refl
   geq PhoneNumber _ = Nothing
+  geq Position Position = Just Refl
+  geq Position _ = Nothing
   geq Quantity Quantity = Just Refl
   geq Quantity _ = Nothing
+  geq Recurrence Recurrence = Just Refl
+  geq Recurrence _ = Nothing
   geq Temperature Temperature = Just Refl
   geq Temperature _ = Nothing
   geq Time Time = Just Refl

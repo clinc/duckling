@@ -3,23 +3,15 @@
 --
 -- This source code is licensed under the BSD-style license found in the
 -- LICENSE file in the root directory of this source tree.
-
-
 {-# LANGUAGE GADTs #-}
 
-
 module Duckling.Rules.EN
-  ( defaultRules
-  , langRules
-  , localeRules
-  ) where
+  ( defaultRules,
+    langRules,
+    localeRules,
+  )
+where
 
-import Prelude
-
-import Duckling.Dimensions.Types
-import Duckling.Locale
-import Duckling.Types
-import qualified Duckling.AmountOfMoney.EN.Rules as AmountOfMoney
 import qualified Duckling.AmountOfMoney.EN.AU.Rules as AmountOfMoneyAU
 import qualified Duckling.AmountOfMoney.EN.BZ.Rules as AmountOfMoneyBZ
 import qualified Duckling.AmountOfMoney.EN.CA.Rules as AmountOfMoneyCA
@@ -28,18 +20,22 @@ import qualified Duckling.AmountOfMoney.EN.IE.Rules as AmountOfMoneyIE
 import qualified Duckling.AmountOfMoney.EN.IN.Rules as AmountOfMoneyIN
 import qualified Duckling.AmountOfMoney.EN.JM.Rules as AmountOfMoneyJM
 import qualified Duckling.AmountOfMoney.EN.NZ.Rules as AmountOfMoneyNZ
+import qualified Duckling.AmountOfMoney.EN.Rules as AmountOfMoney
 import qualified Duckling.AmountOfMoney.EN.PH.Rules as AmountOfMoneyPH
 import qualified Duckling.AmountOfMoney.EN.TT.Rules as AmountOfMoneyTT
 import qualified Duckling.AmountOfMoney.EN.US.Rules as AmountOfMoneyUS
+import Duckling.Dimensions.Types
 import qualified Duckling.AmountOfMoney.EN.ZA.Rules as AmountOfMoneyZA
 import qualified Duckling.Distance.EN.Rules as Distance
 import qualified Duckling.Duration.EN.Rules as Duration
+import Duckling.Locale
 import qualified Duckling.Email.EN.Rules as Email
 import qualified Duckling.Numeral.EN.Rules as Numeral
+import qualified Duckling.Position.EN.Rules as Position
 import qualified Duckling.Ordinal.EN.Rules as Ordinal
+import qualified Duckling.Recurrence.EN.Rules as Recurrence
 import qualified Duckling.Quantity.EN.Rules as Quantity
 import qualified Duckling.Temperature.EN.Rules as Temperature
-import qualified Duckling.Time.EN.Rules as Time
 import qualified Duckling.Time.EN.AU.Rules as TimeAU
 import qualified Duckling.Time.EN.BZ.Rules as TimeBZ
 import qualified Duckling.Time.EN.CA.Rules as TimeCA
@@ -48,16 +44,19 @@ import qualified Duckling.Time.EN.IE.Rules as TimeIE
 import qualified Duckling.Time.EN.IN.Rules as TimeIN
 import qualified Duckling.Time.EN.JM.Rules as TimeJM
 import qualified Duckling.Time.EN.NZ.Rules as TimeNZ
+import qualified Duckling.Time.EN.Rules as Time
 import qualified Duckling.Time.EN.PH.Rules as TimePH
 import qualified Duckling.Time.EN.TT.Rules as TimeTT
 import qualified Duckling.Time.EN.US.Rules as TimeUS
 import qualified Duckling.Time.EN.ZA.Rules as TimeZA
+import Duckling.Types
 import qualified Duckling.TimeGrain.EN.Rules as TimeGrain
+import Prelude
 import qualified Duckling.Volume.EN.Rules as Volume
 
 defaultRules :: Seal Dimension -> [Rule]
 defaultRules dim@(Seal Time) = TimeUS.rulesBackwardCompatible ++ langRules dim
-defaultRules dim             = langRules dim
+defaultRules dim = langRules dim
 
 localeRules :: Region -> Seal Dimension -> [Rule]
 localeRules AU (Seal AmountOfMoney) = AmountOfMoneyAU.rules
@@ -96,7 +95,9 @@ langRules (Seal Email) = Email.rules
 langRules (Seal Numeral) = Numeral.rules
 langRules (Seal Ordinal) = Ordinal.rules
 langRules (Seal PhoneNumber) = []
+langRules (Seal Position) = Position.rules
 langRules (Seal Quantity) = Quantity.rules
+langRules (Seal Recurrence) = Recurrence.rules
 langRules (Seal RegexMatch) = []
 langRules (Seal Temperature) = Temperature.rules
 langRules (Seal Time) = Time.rules

@@ -3,28 +3,26 @@
 --
 -- This source code is licensed under the BSD-style license found in the
 -- LICENSE file in the root directory of this source tree.
-
-
 {-# LANGUAGE GADTs #-}
 
-
 module Duckling.Rules.KO
-  ( defaultRules
-  , langRules
-  , localeRules
-  ) where
+  ( defaultRules,
+    langRules,
+    localeRules,
+  )
+where
 
 import Duckling.Dimensions.Types
-import Duckling.Locale
-import Duckling.Types
 import qualified Duckling.AmountOfMoney.KO.Rules as AmountOfMoney
 import qualified Duckling.Distance.KO.Rules as Distance
+import Duckling.Locale
 import qualified Duckling.Duration.KO.Rules as Duration
 import qualified Duckling.Numeral.KO.Rules as Numeral
 import qualified Duckling.Ordinal.KO.Rules as Ordinal
 import qualified Duckling.Quantity.KO.Rules as Quantity
 import qualified Duckling.Temperature.KO.Rules as Temperature
 import qualified Duckling.Time.KO.Rules as Time
+import Duckling.Types
 import qualified Duckling.TimeGrain.KO.Rules as TimeGrain
 import qualified Duckling.Volume.KO.Rules as Volume
 
@@ -44,7 +42,9 @@ langRules (Seal Email) = []
 langRules (Seal Numeral) = Numeral.rules
 langRules (Seal Ordinal) = Ordinal.rules
 langRules (Seal PhoneNumber) = []
+langRules (Seal Position) = []
 langRules (Seal Quantity) = Quantity.rules
+langRules (Seal Recurrence) = []
 langRules (Seal RegexMatch) = []
 langRules (Seal Temperature) = Temperature.rules
 langRules (Seal Time) = Time.rules

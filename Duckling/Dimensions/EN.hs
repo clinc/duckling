@@ -17,7 +17,9 @@ allDimensions =
   , Seal Duration
   , Seal Numeral
   , Seal Ordinal
+  , Seal Position
   , Seal Quantity
+  , Seal Recurrence
   , Seal Temperature
   , Seal Time
   , Seal Volume

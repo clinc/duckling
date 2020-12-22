@@ -136,6 +136,7 @@ latentCorpus = (testContext, testOptions {withLatent = True}, xs)
       --           ]
       , examples (datetime (2013, 5, 1, 0, 0, 0) Month)
                  [ "May"
+                 , "May 2013"
                  ]
       , examples (datetimeInterval
           ((2013, 2, 12, 0, 0, 0), (2013, 2, 12, 12, 0, 0)) Hour)
@@ -243,6 +244,7 @@ allExamples = concat
              , "first of march"
              , "the first of march"
              , "march first"
+             , "march the first"
              ]
   , examples (datetime (2013, 3, 2, 0, 0, 0) Day)
              [ "the 2nd of march"
@@ -1081,6 +1083,10 @@ allExamples = concat
              , "from the 13th to 15th July"
              , "from the 13th to the 15th July"
              , "from the 13 to the 15 July"
+             , "since jul 13 till jul 15"
+             , "between july 13 and july 15"
+             , "between the 13th and 15th of july"
+             , "between the 13th of july til the 15th"
              ]
   , examples (datetimeInterval ((2013, 7, 13, 0, 0, 0), (2013, 7, 16, 0, 0, 0)) Day)
              [ "from 13 to 15 of July"
@@ -1239,20 +1245,20 @@ allExamples = concat
              ]
   , examples (datetimeOpenInterval Before (2013, 2, 12, 14, 0, 0) Minute)
              [ "until 2:00pm"
-             , "through 2:00pm"
+             , "through 1:00pm"
              ]
   , examples (datetimeOpenInterval After (2013, 2, 12, 14, 0, 0) Hour)
-             [ "after 2 pm"
+             [ "after 1 pm"
              , "from 2 pm"
              , "since 2pm"
              ]
   , examples (datetimeOpenInterval After (2014, 1, 1, 0, 0, 0) Year)
-             [ "anytime after 2014"
+             [ "anytime after 2013"
              , "since 2014"
              ]
   , examples (datetimeOpenInterval Before (2014, 1, 1, 0, 0, 0) Year)
              [ "sometimes before 2014"
-             , "through 2014"
+             , "through 2013"
              ]
   , examples (datetimeOpenInterval After (2013, 2, 17, 4, 0, 0) Hour)
              [ "after 5 days"
@@ -1318,6 +1324,7 @@ allExamples = concat
              [ "March"
              , "in March"
              , "during March"
+             , "March 2013"
              ]
   , examples (datetime (2013, 2, 13, 17, 0, 0) Hour)
              [ "tomorrow afternoon at 5"
@@ -1927,4 +1934,22 @@ allExamples = concat
              [ "next saturday" ]
   , examples (datetime (2013, 2, 18, 0, 0, 0) Day)
              [ "next monday" ]
+  , examples (datetimeOpenInterval After (2017, 1, 1, 0, 0, 0) Month)
+             [ "after December 2016"
+             , "since January 2017"
+             ]
+  , examples (datetime (2013, 4, 1, 0, 0, 0) Month)
+             [ "April"
+             , "April 2013"
+             ]
+  , examples (datetime (2013, 6, 1, 0, 0, 0) Month)
+             [ "June"
+             , "June 2013"
+             ]
+  , examples (datetime (2016, 6, 1, 0, 0, 0) Month)
+             [ "June 2016"
+             ]
+  , examples (datetime (2020, 12, 1, 0, 0, 0) Month)
+             [ "December 2020"
+             ]
   ]

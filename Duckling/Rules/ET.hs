@@ -3,21 +3,19 @@
 --
 -- This source code is licensed under the BSD-style license found in the
 -- LICENSE file in the root directory of this source tree.
-
-
 {-# LANGUAGE GADTs #-}
 
-
 module Duckling.Rules.ET
-  ( defaultRules
-  , langRules
-  , localeRules
-  ) where
+  ( defaultRules,
+    langRules,
+    localeRules,
+  )
+where
 
 import Duckling.Dimensions.Types
 import Duckling.Locale
-import Duckling.Types
 import qualified Duckling.Numeral.ET.Rules as Numeral
+import Duckling.Types
 import qualified Duckling.Ordinal.ET.Rules as Ordinal
 
 defaultRules :: Seal Dimension -> [Rule]
@@ -36,7 +34,9 @@ langRules (Seal Email) = []
 langRules (Seal Numeral) = Numeral.rules
 langRules (Seal Ordinal) = Ordinal.rules
 langRules (Seal PhoneNumber) = []
+langRules (Seal Position) = []
 langRules (Seal Quantity) = []
+langRules (Seal Recurrence) = []
 langRules (Seal RegexMatch) = []
 langRules (Seal Temperature) = []
 langRules (Seal Time) = []

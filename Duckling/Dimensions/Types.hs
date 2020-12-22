@@ -30,6 +30,8 @@ toName RegexMatch = "regex"
 toName CreditCardNumber = "credit-card-number"
 toName Distance = "distance"
 toName Duration = "duration"
+toName Recurrence = "recurrence"
+toName Position = "position"
 toName Email = "email"
 toName AmountOfMoney = "amount-of-money"
 toName Numeral = "number"
@@ -55,7 +57,9 @@ fromName name = HashMap.lookup name m
       , ("number", Seal Numeral)
       , ("ordinal", Seal Ordinal)
       , ("phone-number", Seal PhoneNumber)
+      , ("position", Seal Position)
       , ("quantity", Seal Quantity)
+      , ("recurrence", Seal Recurrence)
       , ("temperature", Seal Temperature)
       , ("time", Seal Time)
       , ("time-grain", Seal TimeGrain)

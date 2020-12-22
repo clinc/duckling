@@ -28,7 +28,7 @@ grains = [ ("second (grain) ", "sec(ond)?s?",      TG.Second)
          , ("month (grain)"  , "months?",          TG.Month)
          , ("quarter (grain)", "(financial )?(quarter|qtr)s?",  TG.Quarter)
          , ("year (grain)"   , "y(ea)?rs?",        TG.Year)
-         ]
+         , ("decade (grain)" , "decades?",         TG.Decade )]
 
 rules :: [Rule]
 rules = map go grains
