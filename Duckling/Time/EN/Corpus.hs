@@ -163,6 +163,14 @@ latentCorpus = (testContext, testOptions {withLatent = True}, xs)
              ,  "twelve ou three"
              ,  "twelve oh three"
              ]
+      , examples (datetime (2013, 2, 12, 4, 30, 0) Second)
+             [ "now"
+             , "right now"
+             , "just now"
+             ]
+      , examples (datetime (2013, 2, 15, 0, 0, 0) Day)
+             [ "on the 15th"
+             ]
       ]
 
 diffContext :: Context
@@ -182,12 +190,7 @@ diffCorpus = (diffContext, testOptions, diffExamples)
 
 allExamples :: [Example]
 allExamples = concat
-  [ examples (datetime (2013, 2, 12, 4, 30, 0) Second)
-             [ "now"
-             , "right now"
-             , "just now"
-             ]
-  , examples (datetime (2013, 2, 12, 0, 0, 0) Day)
+  [ examples (datetime (2013, 2, 12, 0, 0, 0) Day)
              [ "today"
              , "at this time"
              ]
@@ -239,21 +242,35 @@ allExamples = concat
              , "sun"
              , "sun."
              ]
+  , examples (datetime (2013, 1, 2, 0, 0, 0) Day)
+             [ "the 2nd of January 2013"
+             , "second of this past january"
+             , "on the second of last month"
+             ]
+  , examples (datetime (2013, 2, 2, 0, 0, 0) Day)
+             [ "the 2nd of February 2013"
+             , "second of february"
+             , "on the 2nd of this month"
+             , "second of this month"
+             ] 
   , examples (datetime (2013, 3, 1, 0, 0, 0) Day)
              [ "the 1st of march"
              , "first of march"
              , "the first of march"
              , "march first"
              , "march the first"
+             , "1st of next month"
              ]
   , examples (datetime (2013, 3, 2, 0, 0, 0) Day)
              [ "the 2nd of march"
              , "second of march"
              , "the second of march"
+             , "the second of next month"
              ]
   , examples (datetime (2013, 3, 3, 0, 0, 0) Day)
              [ "march 3"
              , "the third of march"
+             , "third of next month"
              ]
   , examples (datetime (2013, 3, 15, 0, 0, 0) Day)
              [ "the ides of march"
@@ -268,8 +285,7 @@ allExamples = concat
              , "2015-03-03"
              ]
   , examples (datetime (2013, 2, 15, 0, 0, 0) Day)
-             [ "on the 15th"
-             , "the 15th of february"
+             [ "the 15th of february"
              , "15 of february"
              , "february the 15th"
              , "february 15"
@@ -798,8 +814,7 @@ allExamples = concat
              , "18th Dec for 10 days"
              ]
   , examples (datetimeInterval ((2013, 2, 12, 16, 0, 0), (2013, 2, 12, 16, 31, 0)) Minute)
-             [ "for 30' starting from 4pm"
-             , "from 4pm for thirty minutes"
+             [ "from 4pm for thirty minutes"
              , "4pm for 30 mins"
              , "16h for 30 mins"
              ]
@@ -1087,6 +1102,10 @@ allExamples = concat
              , "between july 13 and july 15"
              , "between the 13th and 15th of july"
              , "between the 13th of july til the 15th"
+             , "starting on the 13th of july and ending on the 15th"
+             , "starting july 13 ending july 15"
+             , "starting jul 13 through jul 15"
+             , "starts on july 13th and ends on july 15th"
              ]
   , examples (datetimeInterval ((2013, 7, 13, 0, 0, 0), (2013, 7, 16, 0, 0, 0)) Day)
              [ "from 13 to 15 of July"
@@ -1245,19 +1264,18 @@ allExamples = concat
              ]
   , examples (datetimeOpenInterval Before (2013, 2, 12, 14, 0, 0) Minute)
              [ "until 2:00pm"
-             , "through 1:00pm"
+             , "through 1:59pm"
              ]
   , examples (datetimeOpenInterval After (2013, 2, 12, 14, 0, 0) Hour)
              [ "after 1 pm"
-             , "from 2 pm"
              , "since 2pm"
              ]
   , examples (datetimeOpenInterval After (2014, 1, 1, 0, 0, 0) Year)
-             [ "anytime after 2013"
+             [ "after 2013"
              , "since 2014"
              ]
   , examples (datetimeOpenInterval Before (2014, 1, 1, 0, 0, 0) Year)
-             [ "sometimes before 2014"
+             [ "before 2014"
              , "through 2013"
              ]
   , examples (datetimeOpenInterval After (2013, 2, 17, 4, 0, 0) Hour)
@@ -1291,7 +1309,7 @@ allExamples = concat
              ]
   , examples (datetime (2013, 2, 12, 10, 30, 0) Minute)
              [ "10:30"
-             , "approximately 1030"
+             , "approximately 1030am"
              ]
   , examples (datetimeInterval ((2013, 2, 12, 0, 0, 0), (2013, 2, 12, 12, 0, 0)) Hour)
              [ "this morning"
@@ -1314,11 +1332,11 @@ allExamples = concat
              , "this afternoon at 12"
              ]
   , examples (datetime (2013, 2, 13, 9, 0, 0) Hour)
-             [ "9 tomorrow morning"
-             , "9 tomorrow"
+             [ "9 o clock tomorrow morning"
+             , "9am tomorrow"
              ]
   , examples (datetime (2013, 2, 13, 21, 0, 0) Hour)
-             [ "9 tomorrow evening"
+             [ "9 o clock tomorrow evening"
              ]
   , examples (datetime (2013, 3, 1, 0, 0, 0) Month)
              [ "March"
@@ -1341,12 +1359,12 @@ allExamples = concat
              [ "1pm-2pm tomorrow"
              ]
   , examples (datetime (2013, 3, 1, 0, 0, 0) Day)
-             [ "on the first"
-             , "the 1st"
+             [ "on the first of march"
+             , "the 1st of next month"
              ]
   , examples (datetime (2013, 2, 12, 10, 30, 0) Minute)
              [ "at 1030"
-             , "around 1030"
+             , "around 10:30"
              , "ten thirty am"
              ]
   , examples (datetime (2013, 2, 12, 19, 30, 0) Minute)

@@ -107,7 +107,7 @@ rangeTest = testCase "Range Tests" $ do
              [ ( "order status 3233763377", [Seal PhoneNumber], Range 13 23 )
              , ( "  3233763377  "         , [Seal PhoneNumber], Range  2 12 )
              , ( " -3233763377"           , [Seal PhoneNumber], Range  2 12 )
-             , ( "  now"                  , [Seal Time]       , Range  2  5 )
+             , ( "  after January"        , [Seal Time]       , Range  2 15 )
              , ( "   Monday  "            , [Seal Time]       , Range  3  9 )
              , ( "  next   week "         , [Seal Time]       , Range  2 13 )
              , ( "   42\n\n"              , [Seal Numeral]    , Range  3  5 )

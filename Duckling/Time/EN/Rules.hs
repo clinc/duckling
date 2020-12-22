@@ -40,7 +40,7 @@ ruleIntersect :: Rule
 ruleIntersect = Rule
   { name = "intersect"
   , pattern =
-    [ Predicate $ isGrainFinerThan TG.Year
+    [ Predicate $ and . sequence [isNotLatent, isGrainFinerThan TG.Year]
     , Predicate $ or . sequence [isNotLatent, isGrainOfTime TG.Year]
     ]
   , prod = \tokens -> case tokens of
@@ -1279,9 +1279,9 @@ ruleIntervalFromDDDDMonth :: Rule
 ruleIntervalFromDDDDMonth = Rule
   { name = "from the <day-of-month> (ordinal or number) to the <day-of-month> (ordinal or number) <named-month> (interval)"
   , pattern =
-    [ regex "(from|between|since)( the)?"
+    [ regex "(from|between|since|start(s|ing)?( in| on)?)( the)?"
     , Predicate isDOMValue
-    , regex "(\\-|to( the)?|and( the)?|th?ru|through|(un)?til(l)?)( the)?"
+    , regex "(\\-|to( the)?|and( end(s|ing)?( in| on)?)?( the)?|th?ru|through|(un)?til(l)?)( the)?"
     , Predicate isDOMValue
     , Predicate isAMonth
     ]
@@ -1302,9 +1302,9 @@ ruleIntervalFromDDDDOfMonth :: Rule
 ruleIntervalFromDDDDOfMonth = Rule
   { name = "from the <day-of-month> (ordinal or number) to the <day-of-month> (ordinal or number) of <named-month> (interval)"
   , pattern =
-    [ regex "(from|between|since)( the)?"
+    [ regex "(from|between|since|start(s|ing)?( in| on)?)( the)?"
     , Predicate isDOMValue
-    , regex "(\\-|to( the)?|and( the)?|th?ru|through|(un)?til(l)?)( the)?"
+    , regex "(\\-|to( the)?|and( end(s|ing)?( in| on)?)?( the)?|th?ru|through|(un)?til(l)?)( the)?"
     , Predicate isDOMValue
     , regex "of"
     , Predicate isAMonth
@@ -1327,11 +1327,11 @@ ruleIntervalFromOfMonthDDDD :: Rule
 ruleIntervalFromOfMonthDDDD = Rule
   { name = "from the <day-of-month> (ordinal or number) of <named-month> (interval) to the <day-of-month> (ordinal or number)"
   , pattern =
-    [ regex "(from|between|since)( the)?"
+    [ regex "(from|between|since|start(s|ing)?( in| on)?)( the)?"
     , Predicate isDOMValue
     , regex "of"
     , Predicate isAMonth
-    , regex "(\\-|to( the)?|and( the)?|th?ru|through|(un)?til(l)?)( the)?"
+    , regex "(\\-|to( the)?|and( end(s|ing)?( in| on)?)?( the)?|th?ru|through|(un)?til(l)?)( the)?"
     , Predicate isDOMValue
     ]
   , prod = \tokens -> case tokens of
@@ -1381,9 +1381,9 @@ ruleIntervalFrom :: Rule
 ruleIntervalFrom = Rule
   { name = "from <datetime> - <datetime> (interval)"
   , pattern =
-    [ regex "(from|since)"
+    [ regex "(from|since|start(s|ing)?( in| on)?)"
     , dimension Time
-    , regex "\\-|to|th?ru|through|(un)?til(l)?"
+    , regex "\\-|to|th?ru|through|(un)?til(l)?|(and )?end(s|ing)?( in| on)?"
     , dimension Time
     ]
   , prod = \tokens -> case tokens of
@@ -2198,6 +2198,20 @@ ruleDOMOfTimeMonth = Rule
       _ -> Nothing
   }
 
+ruleTheDOMOfTimeMonth :: Rule
+ruleTheDOMOfTimeMonth = Rule
+  { name = "the <day-of-month> (ordinal or number) of <month>"
+  , pattern =
+    [ regex "the"
+    , Predicate isDOMValue
+    , regex "of( the)?"
+    , Predicate $ isGrainOfTime TG.Month
+    ]
+  , prod = \tokens -> case tokens of
+      (_:token:_:Token Time td:_) -> Token Time <$> intersectDOM td token
+      _ -> Nothing
+  }
+
 ruleCycleTheAfterBeforeTime :: Rule
 ruleCycleTheAfterBeforeTime = Rule
   { name = "the <cycle> after|before <time>"
@@ -2880,6 +2894,7 @@ rules =
   , ruleCycleTheAfterBeforeTime
   , ruleCycleThisLastNext
   , ruleDOMOfTimeMonth
+  , ruleTheDOMOfTimeMonth
   , ruleCycleAfterBeforeTime
   , ruleCycleOrdinalOfTime
   , ruleCycleLastOrdinalOfTime

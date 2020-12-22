@@ -123,7 +123,7 @@ ruleBucks :: Rule
 ruleBucks = Rule
   { name = "bucks"
   , pattern =
-    [ regex "(buck|stack|greenback|clam|bill|bone|ace|single|smacker(oonie|oo)?|jawn)s?"
+    [ regex "(buck|stack|greenback|clam|bone|ace|single|smacker(oonie|oo)?|jawn)s?"
     ]
   , prod = \_ -> Just . Token AmountOfMoney $ currencyOnly Unnamed
   }

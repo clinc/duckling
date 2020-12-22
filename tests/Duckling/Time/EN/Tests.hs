@@ -48,7 +48,6 @@ tests = testGroup "EN Tests"
   , makeNegativeCorpusTest [Seal Time] negativeCorpus
   , makeCorpusTest [Seal Time] diffCorpus
   , exactSecondTests
-  , valuesTest
   , intersectTests
   , rangeTests
   , localeTests
@@ -138,20 +137,6 @@ exactSecondTests = testCase "Exact Second Tests" $
                  , "by Monday"
                  ]
       ]
-
-valuesTest :: TestTree
-valuesTest = testCase "Values Test" $
-  mapM_ (analyzedFirstTest testContext testOptions . withTargets [Seal Time]) xs
-  where
-    xs = examplesCustom (parserCheck 1 parseValuesSize)
-                        [ "now"
-                        , "8 o'clock tonight"
-                        , "yesterday"
-                        ]
-    parseValuesSize :: Value -> Maybe Int
-    parseValuesSize x = length <$> parseValues x
-    parseValues :: Value -> Maybe [Object]
-    parseValues = parseMaybe $ withObject "value object" (.: "values")
 
 intersectTests :: TestTree
 intersectTests = testCase "Intersect Test" $
