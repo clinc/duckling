@@ -102,6 +102,10 @@ instance Show TimeData where
 instance NFData TimeData where
   rnf TimeData{..} = rnf (latent, timeGrain, notImmediate, form, direction)
 
+-- Merge zips two lists; merge [1,2] [4,5] -> [1,4,2,5]
+merge [] ys = ys
+merge (x:xs) ys = x:merge ys xs
+
 instance Resolve TimeData where
   type ResolvedValue TimeData = TimeValue
   resolve _ Options {withLatent = False} TimeData {latent = True} = Nothing
@@ -111,7 +115,8 @@ instance Resolve TimeData where
       ahead:nextAhead:_
         | notImmediate && isJust (timeIntersect ahead refTime) -> Just nextAhead
       ahead:_ -> Just ahead
-    values <- Just . take 3 $ if List.null past then future else past
+    future <- Just . drop 1 $ future -- First future is always base value; remove it
+    values <- Just . take 2 $ merge future past
     Just $ case direction of
       Nothing -> (TimeValue (timeValue tzSeries value)
         (map (timeValue tzSeries) values) holiday, latent)

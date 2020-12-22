@@ -3,47 +3,47 @@
 --
 -- This source code is licensed under the BSD-style license found in the
 -- LICENSE file in the root directory of this source tree.
-
-
 {-# LANGUAGE GADTs #-}
 
-
 module Duckling.Rules.DA
-  ( defaultRules
-  , langRules
-  , localeRules
-  ) where
+  ( defaultRules,
+    langRules,
+    localeRules,
+  )
+where
 
 import Duckling.Dimensions.Types
 import Duckling.Locale
-import Duckling.Types
 import qualified Duckling.Duration.DA.Rules as Duration
 import qualified Duckling.Numeral.DA.Rules as Numeral
 import qualified Duckling.Ordinal.DA.Rules as Ordinal
 import qualified Duckling.Time.DA.Rules as Time
+import Duckling.Types
 import qualified Duckling.TimeGrain.DA.Rules as TimeGrain
 
-defaultRules :: Some Dimension -> [Rule]
+defaultRules :: Seal Dimension -> [Rule]
 defaultRules = langRules
 
-localeRules :: Region -> Some Dimension -> [Rule]
-localeRules region (This (CustomDimension dim)) = dimLocaleRules region dim
+localeRules :: Region -> Seal Dimension -> [Rule]
+localeRules region (Seal (CustomDimension dim)) = dimLocaleRules region dim
 localeRules _ _ = []
 
-langRules :: Some Dimension -> [Rule]
-langRules (This AmountOfMoney) = []
-langRules (This CreditCardNumber) = []
-langRules (This Distance) = []
-langRules (This Duration) = Duration.rules
-langRules (This Email) = []
-langRules (This Numeral) = Numeral.rules
-langRules (This Ordinal) = Ordinal.rules
-langRules (This PhoneNumber) = []
-langRules (This Quantity) = []
-langRules (This RegexMatch) = []
-langRules (This Temperature) = []
-langRules (This Time) = Time.rules
-langRules (This TimeGrain) = TimeGrain.rules
-langRules (This Url) = []
-langRules (This Volume) = []
-langRules (This (CustomDimension dim)) = dimLangRules DA dim
+langRules :: Seal Dimension -> [Rule]
+langRules (Seal AmountOfMoney) = []
+langRules (Seal CreditCardNumber) = []
+langRules (Seal Distance) = []
+langRules (Seal Duration) = Duration.rules
+langRules (Seal Email) = []
+langRules (Seal Numeral) = Numeral.rules
+langRules (Seal Ordinal) = Ordinal.rules
+langRules (Seal PhoneNumber) = []
+langRules (Seal Position) = []
+langRules (Seal Quantity) = []
+langRules (Seal Recurrence) = []
+langRules (Seal RegexMatch) = []
+langRules (Seal Temperature) = []
+langRules (Seal Time) = Time.rules
+langRules (Seal TimeGrain) = TimeGrain.rules
+langRules (Seal Url) = []
+langRules (Seal Volume) = []
+langRules (Seal (CustomDimension dim)) = dimLangRules DA dim

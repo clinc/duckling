@@ -33,7 +33,6 @@ import Data.HashSet (HashSet)
 import Data.List (intersperse, sortOn)
 import Data.Maybe
 import Data.Semigroup ((<>))
-import Data.Some
 import Data.Text (Text, toLower, unpack)
 import Data.Typeable ((:~:)(Refl), eqT, Typeable)
 import GHC.Generics
@@ -56,7 +55,9 @@ import Duckling.Locale
 import Duckling.Numeral.Types (NumeralData)
 import Duckling.Ordinal.Types (OrdinalData)
 import Duckling.PhoneNumber.Types (PhoneNumberData)
+import Duckling.Position.Types (PositionData)
 import Duckling.Quantity.Types (QuantityData)
+import Duckling.Recurrence.Types (RecurrenceData)
 import Duckling.Regex.Types
 import Duckling.Resolve
 import Duckling.Temperature.Types (TemperatureData)
@@ -84,6 +85,23 @@ instance NFData Token where
   rnf (Token _ v) = rnf v
 
 -- -----------------------------------------------------------------
+-- Seal
+
+data Seal s where
+  Seal :: s a -> Seal s
+
+instance GEq s => Eq (Seal s) where
+  Seal x == Seal y =
+    defaultEq x y
+
+instance GShow s => Show (Seal s) where
+  showsPrec p (Seal s)
+    = showParen (p > 10) (showString "Seal " . gshowsPrec 11 s)
+
+withSeal :: Seal s -> (forall t. s t -> r) -> r
+withSeal (Seal x) f = f x
+
+-- -----------------------------------------------------------------
 -- Dimension
 
 class (Show a, Typeable a, Typeable (DimensionData  a)) =>
@@ -92,7 +110,7 @@ class (Show a, Typeable a, Typeable (DimensionData  a)) =>
   dimRules :: a -> [Rule]
   dimLangRules :: Lang -> a -> [Rule]
   dimLocaleRules :: Region -> a -> [Rule]
-  dimDependents :: a -> HashSet (Some Dimension)
+  dimDependents :: a -> HashSet (Seal Dimension)
 
 -- | GADT for differentiating between dimensions
 -- Each dimension should have its own constructor and provide the data structure
@@ -107,7 +125,9 @@ data Dimension a where
   Numeral :: Dimension NumeralData
   Ordinal :: Dimension OrdinalData
   PhoneNumber :: Dimension PhoneNumberData
+  Position :: Dimension PositionData
   Quantity :: Dimension QuantityData
+  Recurrence :: Dimension RecurrenceData
   Temperature :: Dimension TemperatureData
   Time :: Dimension TimeData
   TimeGrain :: Dimension Grain
@@ -126,7 +146,9 @@ instance Show (Dimension a) where
   show Numeral = "Numeral"
   show Ordinal = "Ordinal"
   show PhoneNumber = "PhoneNumber"
+  show Position = "Position"
   show Quantity = "Quantity"
+  show Recurrence = "Recurrence"
   show Temperature = "Temperature"
   show Time = "Time"
   show TimeGrain = "TimeGrain"
@@ -138,12 +160,12 @@ instance GShow Dimension where gshowsPrec = showsPrec
 -- TextShow
 instance TextShow (Dimension a) where
   showb d = TS.fromString $ show d
-instance TextShow (Some Dimension) where
-  showb (This d) = showb d
+instance TextShow (Seal Dimension) where
+  showb (Seal d) = showb d
 
 -- Hashable
-instance Hashable (Some Dimension) where
-  hashWithSalt s (This a) = hashWithSalt s a
+instance Hashable (Seal Dimension) where
+  hashWithSalt s (Seal a) = hashWithSalt s a
 instance Hashable (Dimension a) where
   hashWithSalt s RegexMatch          = hashWithSalt s (0::Int)
   hashWithSalt s Distance            = hashWithSalt s (1::Int)
@@ -161,6 +183,8 @@ instance Hashable (Dimension a) where
   hashWithSalt s Volume              = hashWithSalt s (13::Int)
   hashWithSalt s (CustomDimension _) = hashWithSalt s (14::Int)
   hashWithSalt s CreditCardNumber    = hashWithSalt s (15::Int)
+  hashWithSalt s Recurrence          = hashWithSalt s (16::Int)
+  hashWithSalt s Position            = hashWithSalt s (17::Int)
 
 instance GEq Dimension where
   geq RegexMatch RegexMatch = Just Refl
@@ -181,8 +205,12 @@ instance GEq Dimension where
   geq Ordinal _ = Nothing
   geq PhoneNumber PhoneNumber = Just Refl
   geq PhoneNumber _ = Nothing
+  geq Position Position = Just Refl
+  geq Position _ = Nothing
   geq Quantity Quantity = Just Refl
   geq Quantity _ = Nothing
+  geq Recurrence Recurrence = Just Refl
+  geq Recurrence _ = Nothing
   geq Temperature Temperature = Just Refl
   geq Temperature _ = Nothing
   geq Time Time = Just Refl

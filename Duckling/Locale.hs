@@ -8,32 +8,66 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE NoRebindableSyntax #-}
-
 module Duckling.Locale
   ( Lang(..)
   , Locale(..)
-  , Region(AU,BE,BZ,CA,CN,GB,HK,IE,IN,JM,MO,NZ,PH,TT,TW,US,ZA)
+  , Region
+      ( AU
+      , BE
+      , BZ
+      , CA
+      , CL
+      , CN
+      , CO
+      , EG
+      , GB
+      , HK
+      , IE
+      , IN
+      , JM
+      , MO
+      , MX
+      , NZ
+      , PE
+      , PH
+      , TT
+      , TW
+      , US
+      , VE
+      , ZA
+      )
   , allLocales
   , makeLocale
   ) where
 
-import Data.Hashable
 import Data.HashMap.Strict (HashMap)
+import qualified Data.HashMap.Strict as HashMap
 import Data.HashSet (HashSet)
+import qualified Data.HashSet as HashSet
+import Data.Hashable
 import GHC.Generics
 import Prelude
 import TextShow (TextShow)
-import qualified Data.HashMap.Strict as HashMap
-import qualified Data.HashSet as HashSet
 import qualified TextShow as TS
 
-import Duckling.Region hiding (NL)
-import qualified Duckling.Region as R (Region(NL))
+import Duckling.Region hiding
+  ( AR
+  , ES
+  , NL
+  )
+import qualified Duckling.Region as R
+  ( Region
+      ( AR
+      , ES
+      , NL
+      )
+  )
 
 -- | ISO 639-1 Language.
 -- See https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 data Lang
-  = AR
+  = AF
+  | AR
   | BG
   | BN
   | CS
@@ -43,6 +77,7 @@ data Lang
   | EN
   | ES
   | ET
+  | FA
   | FI
   | FR
   | GA
@@ -69,9 +104,11 @@ data Lang
   | PT
   | RO
   | RU
+  | SK
   | SV
   | SW
   | TA
+  | TE
   | TH
   | TR
   | UK
@@ -101,8 +138,11 @@ makeLocale lang (Just region)
     locales = HashMap.lookupDefault HashSet.empty lang allLocales
 
 allLocales :: HashMap Lang (HashSet Region)
-allLocales = HashMap.fromList
-  [ (EN, HashSet.fromList [AU, BZ, CA, GB, IN, IE, JM, NZ, PH, ZA, TT, US])
-  , (NL, HashSet.fromList [BE, R.NL])
-  , (ZH, HashSet.fromList [CN, HK, MO, TW])
-  ]
+allLocales =
+  HashMap.fromList
+    [ (AR, HashSet.fromList [EG])
+    , (EN, HashSet.fromList [AU, BZ, CA, GB, IN, IE, JM, NZ, PH, ZA, TT, US])
+    , (ES, HashSet.fromList [R.AR, CL, CO, R.ES, MX, PE, VE])
+    , (NL, HashSet.fromList [BE, R.NL])
+    , (ZH, HashSet.fromList [CN, HK, MO, TW])
+    ]
