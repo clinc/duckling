@@ -82,8 +82,8 @@ timeFormatTest :: TestTree
 timeFormatTest = testCase "Format Test" $
   mapM_ (analyzedFirstTest testContext testOptions . withTargets [Seal Time]) xs
   where
-    xs = examplesCustom (parserCheck expected parseValue) ["now"]
-    expected = "2013-02-12T04:30:00.000-02:00"
+    xs = examplesCustom (parserCheck expected parseValue) ["today"]
+    expected = "2013-02-12T00:00:00.000-02:00"
 
 parseValue :: Value -> Maybe Text
 parseValue = parseMaybe . withObject "value object" $ \o -> o .: "value"

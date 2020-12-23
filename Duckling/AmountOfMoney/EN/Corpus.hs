@@ -25,6 +25,11 @@ negativeCorpus = (testContext, testOptions, examples)
   where
     examples =
       [ "exactly dollars"
+      , "five"
+      , "5"
+      , "about 5"
+      , "7.2"
+      , "7.20000"
       ]
 
 corpus :: Corpus
@@ -34,16 +39,7 @@ latentCorpus :: Corpus
 latentCorpus = (testContext, testOptions {withLatent = True}, xs)
   where
     xs = concat
-      [ examples (simple Unnamed 5)
-                 [ "five"
-                 , "5"
-                 , "about 5"
-                 ]
-      , examples (simple Unnamed 7.2)
-                 [ "7.2"
-                 , "7.20000"
-                 ]
-      ]
+      []
 
 allExamples :: [Example]
 allExamples = concat
@@ -75,7 +71,7 @@ allExamples = concat
              [ "USD3.14"
              , "3.14US$"
              , "US$ 3.14"
-             , "US$3 and fourteen"
+             , "US$3 and fourteen cents"
              ]
   , examples (simple EUR 20)
              [ "20\x20ac"
@@ -99,23 +95,23 @@ allExamples = concat
              , "Rs20"
              ]
   , examples (simple INR 20.43)
-             [ "20 Rupees 43"
-             , "twenty rupees 43"
+             [ "20 Rupees 43 cent"
+             , "twenty rupees 43c"
              ]
   , examples (simple Dollar 20.43)
              [ "$20 and 43c"
-             , "$20 43"
+             , "$20 43 cent"
              , "20 dollar 43c"
              , "20 dollars 43 cents"
              , "twenty dollar 43 cents"
-             , "20 dollar 43"
-             , "twenty dollar and 43"
+             , "20 dollar 43 cent"
+             , "twenty dollar and 43c"
              ]
   , examples (simple GBP 3.01)
              [ "GBP3.01"
              , "GBP 3.01"
              , "3 GBP 1 pence"
-             , "3 GBP and one"
+             , "3 GBP and one pence"
              ]
   , examples (simple CAD 3.03)
              [ "CAD3.03"
@@ -185,8 +181,8 @@ allExamples = concat
              [ "20 ringgit and 43c"
              , "20 ringgit and 43 sen"
              , "twenty ringgit 43 sens"
-             , "20 ringgit 43"
-             , "twenty ringgit and 43"
+             , "20 ringgit 43 cent"
+             , "twenty ringgit and 43 cents"
              ]
   , examples (simple Dinar 10)
              [ "10 dinars"

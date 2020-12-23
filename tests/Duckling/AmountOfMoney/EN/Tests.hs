@@ -144,7 +144,7 @@ intersectTests = testCase "Intersect Test" $
          , ("1.1 dollars 6", 2)
          , ("10 cents and 8 cents", 2)
          , ("10 dollars and 2 dollars", 2)
-         , ("between 4.1 dollars and 4 dollars", 3)
+         , ("between 4.1 dollars and 4 dollars", 2)
          , ("between 4 dollars and 7 euros", 2)
          ]
 
