@@ -1,13 +1,9 @@
 # Fork information
+This fork was initially created from commit `8d681f7` upstream. Updates are periodically pulled downstream.
 
-This fork was created from commit **8d681f7** on Facebook's master branch (Dec 2019). The newest tagged version before this commit was v0.1.6.1 (Jun 2018).
+Tags/releases follow [Semantic Versioning](https://semver.org/), starting from `0.2.0`.
 
-Tags on Clinc's fork follow [Semantic Versioning](https://semver.org/), starting from 0.2.0:
-
-The first tagged version is:
-c0.2.0 (**c** = Clinc Version)
-
-# Duckling 
+# Duckling
 Duckling is a Haskell library that parses text into structured data.
 
 ```
@@ -66,11 +62,15 @@ Please look into [this directory](https://github.com/facebook/duckling/blob/mast
 | `Numeral` | "eighty eight" | `{"value":88,"type":"value"}`
 | `Ordinal` | "33rd" | `{"value":33,"type":"value"}`
 | `PhoneNumber` | "+1 (650) 123-4567" | `{"value":"(+1) 6501234567"}`
+| `Position` | "first three" | `{"span":3,"offset":0,"anchor":"start","type":"value"}`
 | `Quantity` | "3 cups of sugar" | `{"value":3,"type":"value","product":"sugar","unit":"cup"}`
+| `Recurrence` | "every week" | `{"week":1,"value":1,"anchor":null,"type":"value","times":1,"unit":"week","normalized":{"value":604800,"unit":"second"}`
 | `Temperature` | "80F" | `{"value":80,"type":"value","unit":"fahrenheit"}`
 | `Time` | "today at 9am" | `{"values":[{"value":"2016-12-14T09:00:00.000-08:00","grain":"hour","type":"value"}],"value":"2016-12-14T09:00:00.000-08:00","grain":"hour","type":"value"}`
 | `Url` | "https://api.wit.ai/message?q=hi" | `{"value":"https://api.wit.ai/message?q=hi","domain":"api.wit.ai"}`
 | `Volume` | "4 gallons" | `{"value":4,"type":"value","unit":"gallon"}`
+
+Clinc note: `Position` and `Recurrence` are custom dimensions that only exist downstream.
 
 [Custom dimensions](https://github.com/facebook/duckling/blob/master/exe/CustomDimensionExample.hs) are also supported.
 
@@ -114,7 +114,7 @@ shouldn't) parse. The reference time for the corpus is Tuesday Feb 12, 2013 at
 ```
 $ stack repl --no-load
 > :l Duckling.Debug
-> debug (makeLocale EN $ Just US) "in two minutes" [This Time]
+> debug (makeLocale EN $ Just US) "in two minutes" [Seal Time]
 in|within|after <duration> (in two minutes)
 -- regex (in)
 -- <integer> <unit-of-duration> (two minutes)
@@ -122,7 +122,9 @@ in|within|after <duration> (in two minutes)
 -- -- -- regex (two)
 -- -- minute (grain) (minutes)
 -- -- -- regex (minutes)
-[Entity {dim = "time", body = "in two minutes", value = RVal Time (TimeValue (SimpleValue (InstantValue {vValue = 2013-02-12 04:32:00 -0200, vGrain = Second})) [SimpleValue (InstantValue {vValue = 2013-02-12 04:32:00 -0200, vGrain = Second})] Nothing), start = 0, end = 14}]
+[Entity {dim = "time", body = "in two minutes", value = RVal Time (TimeValue (SimpleValue (InstantValue {vValue = 2013-02-12 04:32:00 -0200, vGrain = Second})) [] Nothing), start = 0, end = 14, latent = False, enode = Node {nodeRange = Range 0 14, token = Token Time TimeData{latent=False, grain=Minute, form=Nothing, direction=Nothing, holiday=Nothing, hasTimezone=False}, children = [Node {nodeRange = Range 0 2, token = Token RegexMatch (GroupMatch ["in"]), children = [], rule = Nothing},Node {nodeRange = Range 3 14, token = Token Duration (DurationData {value = 2, grain = Minute}), children = [Node {nodeR
+ange = Range 3 6, token = Token Numeral (NumeralData {value = 2.0, grain = Nothing, multipliable = False, okForAnyTime = True}), children = [Node {nodeRange = Range 3 6, token = Token RegexMatch (GroupMatch ["two","","","",""]), children = [], rule = Nothing}], rule = Just "integer (0..19)"},Node {nodeRange = Range 7 14, token = Token TimeGrain Minute, children = [Node {nodeRange = Range 7 14, token = Tok
+en RegexMatch (GroupMatch ["inutes","ute"]), children = [], rule = Nothing}], rule = Just "minute (grain)"}], rule = Just "<integer> <unit-of-duration>"}], rule = Just "in|within|after <duration>"}}]
 ```
 
 ## License

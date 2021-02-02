@@ -14,59 +14,97 @@
 
 module Duckling.Recurrence.Types where
 
-import Control.DeepSeq
-import Data.Aeson
-import Data.Hashable
-import Data.Semigroup
+import Control.DeepSeq (NFData)
+import Data.Aeson (object, KeyValue((.=)), ToJSON(toJSON))
+import Data.Hashable (Hashable(hashWithSalt))
 import Data.Text (Text)
+import qualified Data.Time as Time
 import Data.Tuple.Extra (both)
-import GHC.Generics
+import GHC.Generics (Generic)
 import TextShow (showt)
-import Prelude
+import Data.Maybe (fromJust)
 
 import Duckling.Resolve (Resolve(..))
 import Duckling.TimeGrain.Types (Grain(..), inSeconds)
-import qualified Data.Time as Time
+import Duckling.Time.Types (TimeData(..), TimeValue(..), SingleTimeValue(..), InstantValue(..))
+import qualified Duckling.TimeGrain.Types as TG
+import Control.Monad (join)
 
 data RecurrenceData = RecurrenceData
-  { value  :: Int
-  , grain  :: Grain
-  , anchor :: Maybe Time.UTCTime
+  { value     :: Int
+  , times     :: Int
+  , grain     :: Grain
+  , anchor    :: Maybe TimeData
+  , composite :: Bool
   }
   deriving (Eq, Generic, Ord, Show, NFData)
 
 instance Hashable RecurrenceData where
-  hashWithSalt s (RecurrenceData value grain _) = hashWithSalt s
-    (0::Int, (value, grain))
+  hashWithSalt s (RecurrenceData value times grain _ _) = hashWithSalt s
+    (0::Int, (value, times, grain))
+
+data RecurrenceValue = RecurrenceValue
+  { rValue  :: Int
+  , rTimes  :: Int
+  , rGrain  :: Grain
+  , rAnchor :: Maybe TimeValue
+  }
+  deriving (Eq, Show)
 
 instance Resolve RecurrenceData where
-  type ResolvedValue RecurrenceData = RecurrenceData
-  resolve _ _ x = Just (x, False)
+  type ResolvedValue RecurrenceData = RecurrenceValue
+  resolve context options RecurrenceData {value, times, grain, anchor} = do
+    Just $ case anchor of
+      Nothing -> (RecurrenceValue value times grain Nothing, False)
+      Just d -> do
+        (RecurrenceValue value times g a, False)
+        where
+          a = unwrapValue $ resolve context options d
+          g = case a of
+            Just tv -> g
+              where
+                -- determine grain from distance between values
+                (v, vals) = getVals tv
+                g = case vals of
+                  (alt:_) -> g
+                    where
+                      g = case (getUTC v, getUTC alt) of
+                        (Just t1, Just t2) -> do
+                          let (d, _) = properFraction $ Time.diffUTCTime t1 t2
+                          let delta = abs d
+                          if      delta <= 10000 then
+                            TG.Year
+                          else if delta <= 100000 then
+                            TG.Day
+                          else if delta <= 1000000 then
+                            TG.Week
+                          else if delta <= 10000000 then
+                            TG.Month
+                          else
+                            TG.Year
+                        _  -> grain
+                      getUTC :: SingleTimeValue -> Maybe Time.UTCTime 
+                      getUTC (SimpleValue (InstantValue v g)) = Just $ Time.zonedTimeToUTC v
+                      getUTC _ = Nothing
+                  [] -> grain
+                getVals :: TimeValue -> (SingleTimeValue, [SingleTimeValue])
+                getVals (TimeValue val vals text) = (val, vals)
+            Nothing -> grain
+          unwrapValue :: Maybe (TimeValue, Bool) -> Maybe TimeValue
+          unwrapValue tup = case tup of
+            Just (val, _) -> Just val
+            Nothing       -> Nothing
 
-instance Semigroup RecurrenceData where
-  d1@(RecurrenceData _ g1 t) <> d2@(RecurrenceData _ g2 _) = RecurrenceData (v1+v2) g t
-    where
-    g = g1 `min` g2
-    (RecurrenceData v1 _ t, RecurrenceData v2 _ _) = both (withGrain g) (d1,d2)
-
-instance ToJSON RecurrenceData where
-  toJSON RecurrenceData {value, grain, anchor} = object
+instance ToJSON RecurrenceValue where
+  toJSON RecurrenceValue {rValue, rTimes, rGrain, rAnchor} = object
     [ "type"       .= ("value" :: Text)
-    , "value"      .= value
-    , "unit"       .= grain
-    , "anchor"     .= anchor
-    , showt grain  .= value
+    , "value"      .= rValue
+    , "times"      .= rTimes
+    , "unit"       .= rGrain
+    , "anchor"     .= rAnchor
+    , showt rGrain  .= rValue
     , "normalized" .= object
       [ "unit"  .= ("second" :: Text)
-      , "value" .= inSeconds grain value
+      , "value" .= inSeconds rGrain rValue
       ]
     ]
-
--- | Convert a duration to the given grain, rounded to the
--- nearest integer. For example, 1 month is converted to 4 weeks.
-withGrain :: Grain -> RecurrenceData -> RecurrenceData
-withGrain g d@(RecurrenceData v1 g1 t)
-  | g == g1 = d
-  | otherwise = RecurrenceData v g t
-      where
-      v = round $ inSeconds g1 (fromIntegral v1 :: Double) / inSeconds g 1

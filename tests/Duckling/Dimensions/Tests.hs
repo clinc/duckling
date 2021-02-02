@@ -21,7 +21,9 @@ import qualified Duckling.Email.Tests as Email
 import qualified Duckling.Numeral.Tests as Numeral
 import qualified Duckling.Ordinal.Tests as Ordinal
 import qualified Duckling.PhoneNumber.Tests as PhoneNumber
+import qualified Duckling.Position.Tests as Position
 import qualified Duckling.Quantity.Tests as Quantity
+import qualified Duckling.Recurrence.Tests as Recurrence
 import qualified Duckling.Temperature.Tests as Temperature
 import qualified Duckling.Time.Tests as Time
 import qualified Duckling.Volume.Tests as Volume
@@ -37,7 +39,9 @@ tests = testGroup "Dimensions Tests"
   , Numeral.tests
   , Ordinal.tests
   , PhoneNumber.tests
+  , Position.tests
   , Quantity.tests
+  , Recurrence.tests
   , Temperature.tests
   , Time.tests
   , Volume.tests
