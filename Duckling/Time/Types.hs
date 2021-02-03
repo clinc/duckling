@@ -102,10 +102,6 @@ instance Show TimeData where
 instance NFData TimeData where
   rnf TimeData{..} = rnf (latent, timeGrain, notImmediate, form, direction)
 
--- Merge zips two lists; merge [1,2] [4,5] -> [1,4,2,5]
-merge [] ys = ys
-merge (x:xs) ys = x:merge ys xs
-
 instance Resolve TimeData where
   type ResolvedValue TimeData = TimeValue
   resolve _ Options {withLatent = False} TimeData {latent = True} = Nothing
@@ -136,6 +132,11 @@ instance Resolve TimeData where
         , minTime = timePlus refTime TG.Year $ - 2000
         }
       (past, future) = runPredicate timePred refTime tc
+
+      -- Merge zips two lists; merge [1,2] [4,5] -> [1,4,2,5]
+      merge :: [a] -> [a] -> [a]
+      merge [] ys = ys
+      merge (x:xs) ys = x:merge ys xs
 
 timedata' :: TimeData
 timedata' = TimeData

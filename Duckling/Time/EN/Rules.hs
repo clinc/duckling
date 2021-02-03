@@ -1126,6 +1126,15 @@ ruleWeekend = Rule
   , prod = \_ -> tt $ mkOkForThisNext weekend
   }
 
+ruleWeekday :: Rule
+ruleWeekday = Rule
+  { name = "week-day"
+  , pattern =
+    [ regex "(week(\\s|-)?day)s?"
+    ]
+  , prod = \_ -> tt $ mkOkForThisNext weekday
+  }
+
 ruleWeek :: Rule
 ruleWeek = Rule
  { name = "week"
@@ -2867,6 +2876,7 @@ rules =
   , ruleTimePOD
   , rulePODofTime
   , ruleWeekend
+  , ruleWeekday
   , ruleWeek
   , ruleTODPrecision
   , ruleTODPOD

@@ -92,7 +92,8 @@ dependents (Seal Ordinal) = HashSet.singleton (Seal Numeral)
 dependents (Seal PhoneNumber) = HashSet.empty
 dependents (Seal Position) = HashSet.fromList [Seal Numeral, Seal Ordinal]
 dependents (Seal Quantity) = HashSet.singleton (Seal Numeral)
-dependents (Seal Recurrence) = HashSet.fromList [Seal Numeral, Seal TimeGrain]
+dependents (Seal Recurrence) =
+  HashSet.fromList [Seal Numeral, Seal Duration, Seal Ordinal, Seal TimeGrain, Seal Time]
 dependents (Seal RegexMatch) = HashSet.empty
 dependents (Seal Temperature) = HashSet.singleton (Seal Numeral)
 dependents (Seal Time) =

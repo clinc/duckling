@@ -34,20 +34,20 @@ negativeCorpus = (testContext, testOptions, examples)
 
 allExamples :: [Example]
 allExamples = concat
-  [ examples (PositionData 0 1 TPosition.Start)
-             [ "first one from the left side"
+  [ examples (PositionData 1 0 TPosition.Start)
+             [ "first one from the left"
              , "one from the top"
              , "first from the top"
-             , "the first relative to the start"
+             , "first relative to the start"
              ]
-  , examples (PositionData (- 1) 1 TPosition.End)
+  , examples (PositionData 1 (- 1) TPosition.End)
              [ "last"
              , "bottom one"
-             , "the one on the right"
+             , "one on the right"
              ]
   , examples (PositionData 1 1 TPosition.Start)
-             [ "the second one"
-             , "the second from the top"
+             [ "second one"
+             , "second from the top"
              , "second relative to the left"
              ]
   ]

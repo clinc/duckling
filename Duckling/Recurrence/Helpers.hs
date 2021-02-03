@@ -9,17 +9,21 @@
 
 module Duckling.Recurrence.Helpers
   ( recurrence
+  , timedRecurrence
   , anchoredRecurrence
   , isGrain
   , isNatural
   , recurrentDimension
+  , isBasicRecurrence
+  , mkComposite
+  , tr
   ) where
 
 import Prelude
 
 import Duckling.Dimensions.Types
 import Duckling.Duration.Types (DurationData (DurationData))
-import Duckling.Recurrence.Types (RecurrenceData (RecurrenceData))
+import Duckling.Recurrence.Types (RecurrenceData (..))
 import Duckling.Time.Types (TimeData(TimeData))
 import Duckling.Numeral.Helpers (isNatural)
 import Duckling.Types
@@ -27,6 +31,7 @@ import qualified Data.Time as Time
 import qualified Duckling.Recurrence.Types as TRecurrence
 import qualified Duckling.TimeGrain.Types as TG
 import qualified Duckling.Duration.Types as TDuration
+import qualified Duckling.Time.Types as TTime
 
 -- -----------------------------------------------------------------
 -- Patterns
@@ -35,17 +40,31 @@ isGrain :: TG.Grain -> Predicate
 isGrain value (Token TimeGrain grain) = grain == value
 isGrain _ _ = False
 
--- -----------------------------------------------------------------
--- Production
-
-recurrence :: TG.Grain -> Int -> RecurrenceData
-recurrence grain n = RecurrenceData {TRecurrence.grain = grain, TRecurrence.value = n, TRecurrence.anchor = Nothing}
-
-anchoredRecurrence :: TG.Grain -> Int -> Maybe Time.UTCTime -> RecurrenceData
-anchoredRecurrence grain n t = RecurrenceData {TRecurrence.grain = grain, TRecurrence.value = n, TRecurrence.anchor = t}
+isBasicRecurrence :: Predicate
+isBasicRecurrence (Token Recurrence r) = not $ composite r
+isBasicRecurrence _ = False
 
 recurrentDimension :: Predicate
-recurrentDimension (Token Time _) = True
+recurrentDimension (Token Time td) = not $ TTime.latent td
 recurrentDimension (Token Duration _) = True
 recurrentDimension (Token TimeGrain _) = True
 recurrentDimension _ = False
+
+-- -----------------------------------------------------------------
+-- Production
+
+-- | Convenience helper to return a recurrence token from a rule
+tr :: RecurrenceData -> Maybe Token
+tr = Just . Token Recurrence
+
+recurrence :: TG.Grain -> Int -> RecurrenceData
+recurrence g v = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = Nothing, TRecurrence.times = 1, TRecurrence.composite = False}
+
+timedRecurrence :: TG.Grain -> Int -> Int -> RecurrenceData
+timedRecurrence g v t = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = Nothing, TRecurrence.times = t, TRecurrence.composite = False}
+
+anchoredRecurrence :: TG.Grain -> Int -> TimeData -> RecurrenceData
+anchoredRecurrence g v a = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = Just a, TRecurrence.times = 1, TRecurrence.composite = False}
+
+mkComposite :: RecurrenceData -> Int -> RecurrenceData
+mkComposite RecurrenceData { TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = a, TRecurrence.times = t } t' = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = a, TRecurrence.times = t * t', TRecurrence.composite = True}
