@@ -101,6 +101,7 @@ negativeCorpus = (testContext, testOptions, examples)
       , "Rat 6"
       , "rat 6"
       , "3 30"
+      , "3.30"
       , "three twenty"
       , "at 650.650.6500"
       , "at 650-650-6500"
@@ -199,6 +200,10 @@ allExamples = concat
              ]
   , examples (datetime (2014, 1, 1, 0, 0, 0) Year)
              [ "in 2014"
+               , "in year 2014"
+               , "in year of 2014"
+               , "in the year 2014"
+               , "in the year of 2014"
              ]
   , examples (datetime (2013, 2, 11, 0, 0, 0) Day)
              [ "yesterday"
@@ -1341,6 +1346,8 @@ allExamples = concat
   , examples (datetime (2013, 3, 1, 0, 0, 0) Month)
              [ "March"
              , "in March"
+             , "in month of march"
+             , "in the month of march"
              , "during March"
              , "March 2013"
              ]
