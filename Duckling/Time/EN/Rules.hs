@@ -106,7 +106,7 @@ ruleAbsorbInMonthYear :: Rule
 ruleAbsorbInMonthYear = Rule
   { name = "in|during <named-month>|year"
   , pattern =
-    [ regex "in|during"
+    [ regex "(in|during)( (the )?(month|year)( of)?)?"
     , Predicate $ or . sequence [isAMonth, isGrainOfTime TG.Year]
     ]
   , prod = \tokens -> case tokens of
@@ -631,7 +631,7 @@ rulePODatTOD = Rule
 ruleHHMM :: Rule
 ruleHHMM = Rule
   { name = "hh:mm"
-  , pattern = [regex "((?:[01]?\\d)|(?:2[0-3]))[:.]([0-5]\\d)"]
+  , pattern = [regex "((?:[01]?\\d)|(?:2[0-3]))[:]([0-5]\\d)"]
   , prod = \tokens -> case tokens of
       (Token RegexMatch (GroupMatch (hh:mm:_)):_) -> do
         h <- parseInt hh

@@ -11,7 +11,7 @@ import Data.String
 import Prelude
 import Test.Tasty
 
-import qualified Duckling.Numeral.AF.Tests as AF
+-- import qualified Duckling.Numeral.AF.Tests as AF
 import qualified Duckling.Numeral.AR.Tests as AR
 import qualified Duckling.Numeral.BG.Tests as BG
 import qualified Duckling.Numeral.BN.Tests as BN
@@ -62,8 +62,7 @@ import qualified Duckling.Numeral.ZH.Tests as ZH
 
 tests :: TestTree
 tests = testGroup "Numeral Tests"
-  [ AF.tests
-  , AR.tests
+  [ AR.tests
   , BG.tests
   , BN.tests
   , CS.tests
