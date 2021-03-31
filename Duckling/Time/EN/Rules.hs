@@ -2495,22 +2495,6 @@ ruleDurationLastNext = Rule
       (Token RegexMatch (GroupMatch (match:_)):
        Token Duration DurationData{TDuration.grain, TDuration.value}:
        _) -> case Text.toLower match of
-         "next" -> tt $ cycleN True grain value
-         _      -> tt $ cycleN True grain (- value)
-      _ -> Nothing
-  }
-
-ruleDurationTheLastNext :: Rule
-ruleDurationTheLastNext = Rule
-  { name = "the last|past|next <duration>"
-  , pattern =
-    [ regex "the ([lp]ast|next)"
-    , dimension Duration
-    ]
-  , prod = \tokens -> case tokens of
-      (Token RegexMatch (GroupMatch (match:_)):
-       Token Duration DurationData{TDuration.grain, TDuration.value}:
-       _) -> case Text.toLower match of
          "next" -> Token Time <$> interval TTime.Closed now (inDuration (DurationData value grain))
          _      -> Token Time <$> interval TTime.Closed (inDuration (DurationData (- value) grain)) now
       _ -> Nothing
@@ -2921,7 +2905,6 @@ rules =
   , ruleCycleOrdinalQuarterYear
   , ruleDurationInWithinAfter
   , ruleDurationLastNext
-  , ruleDurationTheLastNext
   , ruleDurationTheLastNextCycle
   , ruleNDOWago
   , ruleDurationHenceAgo
