@@ -1027,64 +1027,64 @@ allExamples = concat
              , "15 of february in the morning"
              , "morning of the 15th of february"
              ]
-  , examples (datetimeInterval ((2013, 2, 12, 4, 29, 58), (2013, 2, 12, 4, 30, 0)) Second)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 29, 58), (2013, 2, 12, 4, 30, 1)) Second)
              [ "last 2 seconds"
              , "last two seconds"
              ]
-  , examples (datetimeInterval ((2013, 2, 12, 4, 30, 1), (2013, 2, 12, 4, 30, 4)) Second)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 30, 0), (2013, 2, 12, 4, 30, 4)) Second)
              [ "next 3 seconds"
              , "next three seconds"
              ]
-  , examples (datetimeInterval ((2013, 2, 12, 4, 28, 0), (2013, 2, 12, 4, 30, 0)) Minute)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 28, 0), (2013, 2, 12, 4, 30, 1)) Second)
              [ "last 2 minutes"
              , "last two minutes"
              ]
-  , examples (datetimeInterval ((2013, 2, 12, 4, 31, 0), (2013, 2, 12, 4, 34, 0)) Minute)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 30, 0), (2013, 2, 12, 4, 33, 1)) Second)
              [ "next 3 minutes"
              , "next three minutes"
              ]
-  , examples (datetimeInterval ((2013, 2, 12, 3, 0, 0), (2013, 2, 12, 4, 0, 0)) Hour)
+  , examples (datetimeInterval ((2013, 2, 12, 3, 30, 0), (2013, 2, 12, 4, 30, 1)) Second)
              [ "last 1 hour"
              , "last one hour"
              ]
-  , examples (datetimeInterval ((2013, 2, 12, 5, 0, 0), (2013, 2, 12, 8, 0, 0)) Hour)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 30, 0), (2013, 2, 12, 7, 30, 1)) Second)
              [ "next 3 hours"
              , "next three hours"
              ]
-  , examples (datetimeInterval ((2013, 2, 10, 0, 0, 0), (2013, 2, 12, 0, 0, 0)) Day)
+  , examples (datetimeInterval ((2013, 2, 10, 4, 0, 0), (2013, 2, 12, 4, 30, 1)) Second)
              [ "last 2 days"
              , "last two days"
              , "past 2 days"
              ]
-  , examples (datetimeInterval ((2013, 2, 13, 0, 0, 0), (2013, 2, 16, 0, 0, 0)) Day)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 30, 0), (2013, 2, 15, 4, 0, 1)) Second)
              [ "next 3 days"
              , "next three days"
              ]
-  , examples (datetimeInterval ((2013, 2, 13, 0, 0, 0), (2013, 2, 16, 0, 0, 0)) Day)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 30, 0), (2013, 2, 15, 4, 0, 1)) Second)
              [ "next few days"
              ]
-  , examples (datetimeInterval ((2013, 1, 28, 0, 0, 0), (2013, 2, 11, 0, 0, 0)) Week)
+  , examples (datetimeInterval ((2013, 1, 29, 0, 0, 0), (2013, 2, 12, 4, 30, 1)) Second)
              [ "last 2 weeks"
              , "last two weeks"
              , "past 2 weeks"
              ]
-  , examples (datetimeInterval ((2013, 2, 18, 0, 0, 0), (2013, 3, 11, 0, 0, 0)) Week)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 30, 0), (2013, 3, 6, 0, 0, 0)) Second)
              [ "next 3 weeks"
              , "next three weeks"
              ]
-  , examples (datetimeInterval ((2012, 12, 1, 0, 0, 0), (2013, 2, 1, 0, 0, 0)) Month)
+  , examples (datetimeInterval ((2012, 12, 12, 0, 0, 0), (2013, 2, 12, 4, 30, 1)) Second)
              [ "last 2 months"
              , "last two months"
              ]
-  , examples (datetimeInterval ((2013, 3, 1, 0, 0, 0), (2013, 6, 1, 0, 0, 0)) Month)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 30, 0), (2013, 5, 13, 0, 0, 0)) Second)
              [ "next 3 months"
              , "next three months"
              ]
-  , examples (datetimeInterval ((2011, 1, 1, 0, 0, 0), (2013, 1, 1, 0, 0, 0)) Year)
+  , examples (datetimeInterval ((2011, 2, 1, 0, 0, 0), (2013, 2, 12, 4, 30, 1)) Second)
              [ "last 2 years"
              , "last two years"
              ]
-  , examples (datetimeInterval ((2014, 1, 1, 0, 0, 0), (2017, 1, 1, 0, 0, 0)) Year)
+  , examples (datetimeInterval ((2013, 2, 12, 4, 30, 0), (2016, 3, 1, 0, 0, 0)) Second)
              [ "next 3 years"
              , "next three years"
              ]
