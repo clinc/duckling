@@ -1453,7 +1453,7 @@ ruleIntervalTODAMPM = Rule
  { name = "hh(:mm) - <time-of-day> am|pm"
  , pattern =
    [ regex "(?:from )?((?:[01]?\\d)|(?:2[0-3]))([:.]([0-5]\\d))?"
-   , regex "\\-|:|to|th?ru|through|(un)?til(l)?"
+   , regex "\\-|to|th?ru|through|(un)?til(l)?"
    , Predicate isATimeOfDay
    , regex "(in the )?([ap])(\\s|\\.)?m?\\.?"
    ]
@@ -1613,11 +1613,11 @@ ruleEndOrBeginningOfMonth :: Rule
 ruleEndOrBeginningOfMonth = Rule
   { name = "at the beginning|end of <named-month>"
   , pattern =
-    [ regex "(at the )?(beginning|start|end) of"
+    [ regex "(at )?(the )?(beginning|start|end) of"
     , Predicate isAMonth
     ]
   , prod = \tokens -> case tokens of
-      (Token RegexMatch (GroupMatch (_:match:_)):Token Time td:_) -> do
+      (Token RegexMatch (GroupMatch (_:_:match:_)):Token Time td:_) -> do
         (sd, ed) <- case Text.toLower match of
           "beginning" -> Just (1, 10)
           "start"     -> Just (1, 10)
@@ -1665,11 +1665,11 @@ ruleEndOrBeginningOfYear :: Rule
 ruleEndOrBeginningOfYear = Rule
   { name = "at the beginning|end of <year>"
   , pattern =
-    [ regex "(at the )?(beginning|start|end) of"
+    [ regex "(at )?(the )?(beginning|start|end) of"
     , Predicate $ isGrainOfTime TG.Year
     ]
   , prod = \tokens -> case tokens of
-      (Token RegexMatch (GroupMatch (_:match:_)):Token Time td:_) -> do
+      (Token RegexMatch (GroupMatch (_:_:match:_)):Token Time td:_) -> do
         (sd, ed) <- case Text.toLower match of
           "beginning" -> Just (1, 4)
           "start"     -> Just (1, 4)
