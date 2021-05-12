@@ -1452,10 +1452,12 @@ allExamples = concat
   , examples (datetimeInterval ((2012, 9, 1, 0, 0, 0), (2013, 1, 1, 0, 0, 0)) Month)
              [ "end of 2012"
              , "at the end of 2012"
+             , "the end of 2012"
              ]
   , examples (datetimeInterval ((2017, 1, 1, 0, 0, 0), (2017, 4, 1, 0, 0, 0)) Month)
              [ "beginning of 2017"
              , "at the beginning of 2017"
+             , "the beginning of 2017"
              ]
   , examples (datetimeInterval ((2013, 1, 1, 0, 0, 0), (2013, 4, 1, 0, 0, 0)) Month)
              [ "beginning of year"
@@ -1976,5 +1978,50 @@ allExamples = concat
              ]
   , examples (datetime (2020, 12, 1, 0, 0, 0) Month)
              [ "December 2020"
+             ]
+  , examples (datetimeInterval ((2017, 1, 1, 0, 0, 0), (2017, 7, 1, 0, 0, 0)) Day)
+             [ "from 2017 to the end of June"
+             , "from 2017 until the end of June"
+             , "from 2017 to end of June"
+             , "from 2017 until end of June"
+             , "between 2017 and the end of June"
+             ]
+  , examples (datetimeInterval ((2013, 5, 1, 0, 0, 0), (2013, 7, 1, 0, 0, 0)) Month)
+             [ "from May until June"
+             , "from May to June"
+             , "between May and June"
+             ]
+  , examples (datetimeInterval ((2013, 5, 1, 0, 0, 0), (2013, 6, 11, 0, 0, 0)) Day)
+             [ "from May until the start of June"
+             , "from May to the start of June"
+             , "from May until the beginning of June"
+             , "between May and the beginning of June"
+             ]
+  , examples (datetimeInterval ((2013, 5, 1, 0, 0, 0), (2013, 7, 1, 0, 0, 0)) Day)
+             [ "from May until the end of June"
+             , "from May to the end of June"
+             , "from May until the end of June"
+             , "between May and the end of June"
+             ]
+  , examples (datetimeInterval ((2013, 5, 21, 0, 0, 0), (2013, 7, 1, 0, 0, 0)) Day)
+             [ "from end of May until June"
+             , "from the end of May to June"
+             , "from end of May until June"
+             , "between the end of May and June"
+             ]
+  , examples (datetimeInterval ((2013, 5, 21, 0, 0, 0), (2013, 7, 1, 0, 0, 0)) Day)
+             [ "from end of May until end of June"
+             , "from the end of May to end of June"
+             , "from end of May until end of June"
+             , "between the end of May and the end of June"
+             ]
+  , examples (datetimeInterval ((2013, 5, 1, 0, 0, 0), (2013, 6, 11, 0, 0, 0)) Day)
+             [ "from start of May until start of June"
+             , "from the start of May to the beginning of June"
+             , "from beginning of May until start of June"
+             , "between the start of May and the beginning of June"
+             ]
+  , examples (datetime (2013, 2, 12, 18, 0, 0) Second)
+             [ "6:00:00pm"
              ]
   ]

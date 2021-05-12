@@ -48,6 +48,7 @@ import Duckling.Ordinal.Types (OrdinalData (OrdinalData))
 import Duckling.Time.TimeZone.Parse (parseTimezone)
 import Duckling.Time.Types
   ( TimeData(TimeData)
+  , containsTimeIntervalsPredicate
   , mkSeriesPredicate
   , mkSecondPredicate
   , mkMinutePredicate
@@ -221,6 +222,17 @@ takeLastOf cyclicPred basePred =
     f t ctx =
       case runPredicate cyclicPred (TTime.timeStartingAtTheEndOf t) ctx of
         (nth:_, _) -> Just nth
+        _ -> Nothing
+
+-- | Takes the first occurrence of `cyclicPred` within `basePred`.
+takeFirstOf :: TTime.Predicate -> TTime.Predicate -> TTime.Predicate
+takeFirstOf cyclicPred basePred =
+  mkSeriesPredicate $! TTime.timeSeqMap False f basePred
+  where
+    f :: TTime.TimeObject -> TTime.TimeContext -> Maybe TTime.TimeObject
+    f t ctx =
+      case runPredicate cyclicPred t ctx of
+        (_, nth:_) -> Just nth
         _ -> Nothing
 
 -- | Assumes the grain of `pred1` is smaller than the one of `pred2`
@@ -497,6 +509,12 @@ cycleLastOf grain TimeData {TTime.timePred = p} = TTime.timedata'
   , TTime.timeGrain = grain
   }
 
+cycleFirstOf :: TG.Grain -> TimeData -> TimeData
+cycleFirstOf grain TimeData {TTime.timePred = p} = TTime.timedata'
+  { TTime.timePred = takeFirstOf (timeCycle grain) p
+  , TTime.timeGrain = grain
+  }
+
 -- Generalized version of cycleLastOf with custom predicate
 predLastOf :: TimeData -> TimeData -> TimeData
 predLastOf TimeData {TTime.timePred = cyclicPred, TTime.timeGrain = g} base =
@@ -559,6 +577,15 @@ toTimeObjectM (year, month, day) = do
     , TTime.end = Nothing
     }
 
+isInterval :: TimeData -> Bool
+isInterval (TimeData p1 _ _ _ _ _ _ _ _) = containsTimeIntervalsPredicate p1
+
+simplifyEndInterval :: TimeData -> TimeData
+simplifyEndInterval td = if not (isInterval td) then td else cycleLastOf TG.Day td
+
+simplifyStartInterval :: TimeData -> TimeData
+simplifyStartInterval td = if not (isInterval td) then td else cycleFirstOf TG.Day td
+
 interval' :: TTime.TimeIntervalType -> (TimeData, TimeData) -> TimeData
 interval' intervalType (TimeData p1 _ g1 _ _ _ _ _ _, TimeData p2 _ g2 _ _ _ _ _ _) =
   TTime.timedata'
@@ -572,7 +599,7 @@ interval' intervalType (TimeData p1 _ g1 _ _ _ _ _ _, TimeData p2 _ g2 _ _ _ _ _
 
 interval :: TTime.TimeIntervalType -> TimeData -> TimeData -> Maybe TimeData
 interval intervalType td1 td2 =
-  case interval' intervalType (td1, td2) of
+  case interval' intervalType ( (simplifyStartInterval td1), (simplifyEndInterval td2)) of
     TTime.TimeData { TTime.timePred = pred }
       | TTime.isEmptyPredicate pred -> Nothing
     res -> Just res
