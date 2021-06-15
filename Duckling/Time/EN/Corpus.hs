@@ -468,15 +468,15 @@ allExamples = concat
   , examples (datetime (2013, 10, 3, 0, 0, 0) Day)
              [ "third day of october"
              ]
-  , examples (datetime (2014, 10, 6, 0, 0, 0) Week)
+  , examples (datetime (2014, 9, 29, 0, 0, 0) Week)
              [ "first week of october 2014"
              ]
-  , examples (datetime (2018, 12, 10, 0, 0, 0) Week)
+  , examples (datetime (2018, 12, 17, 0, 0, 0) Week)
              [ "third last week of 2018"
              , "the third last week of 2018"
              , "the 3rd last week of 2018"
              ]
-  , examples (datetime (2018, 10, 15, 0, 0, 0) Week)
+  , examples (datetime (2018, 10, 22, 0, 0, 0) Week)
              [ "2nd last week of October 2018"
              , "the second last week of October 2018"
              ]
@@ -484,7 +484,7 @@ allExamples = concat
              [ "fifth last day of May"
              , "the 5th last day of May"
              ]
-  , examples (datetime (2013, 10, 7, 0, 0, 0) Week)
+  , examples (datetime (2013, 9, 30, 0, 0, 0) Week)
              [ "the week of october 6th"
              ]
   , examples (datetime (2013, 10, 7, 0, 0, 0) Week)
@@ -494,7 +494,7 @@ allExamples = concat
              [ "last day of october 2015"
              , "last day in october 2015"
              ]
-  , examples (datetime (2014, 9, 22, 0, 0, 0) Week)
+  , examples (datetime (2014, 9, 29, 0, 0, 0) Week)
              [ "last week of september 2014"
              ]
   , examples (datetime (2013, 10, 1, 0, 0, 0) Day)

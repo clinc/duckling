@@ -17,8 +17,8 @@ module Duckling.Time.Helpers
   , isIntegerBetween, isNotLatent , isOrdinalBetween, isMidnightOrNoon
   , isOkWithThisNext, sameGrain, hasTimezone, hasNoTimezone, today
     -- Production
-  , cycleLastOf, cycleN, cycleNth, cycleNthAfter, dayOfMonth, dayOfWeek
-  , durationAfter, durationAgo, durationBefore, mkOkForThisNext, form, hour
+  , cycleLastOf, cycleN, cycleNth, cycleNthAfter, cycleNthWeekToLast, dayOfMonth
+  , dayOfWeek, durationAfter, durationAgo, durationBefore, mkOkForThisNext, form, hour
   , hourMinute, hourMinuteSecond, inDuration, intersect, intersectDOM, interval
   , inTimezone, longWEBefore, minute, minutesAfter, minutesBefore, mkLatent
   , month, monthDay, notLatent, now, nthDOWOfMonth, partOfDay, predLastOf
@@ -191,6 +191,35 @@ takeNthAfter n notImmediate cyclicPred basePred =
       in case rest of
            [] -> Nothing
            (nth:_) -> Just nth
+
+-- | Like `takeNthAfter`, but corrects predicates which overshoot to next grain
+takeNthWeekToLast
+  :: Int
+  -> TTime.Predicate
+  -> TTime.Predicate
+  -> TTime.Predicate
+takeNthWeekToLast n cyclicPred basePred =
+  mkSeriesPredicate $! TTime.timeSeqMap False f basePred
+  where
+    f t ctx =
+      let (past, future) = runPredicate cyclicPred t ctx
+          rest = if n >= 0
+            then case future of
+              (ahead:_) | True && TTime.timeBefore ahead t
+                -> drop (n + 1) future
+              _ -> drop n future
+            else drop (- (n + 1)) past
+      in case rest of
+        [] -> Nothing
+        (nth:_) -> t
+          where
+            -- get last week of cycle and second to last week of cycle
+            -- if they are in the same month, then add a week to the current result
+            (TTime.TimeObject (Time.UTCTime day _) _ _) = TTime.timePlusEnd nth TG.Week $ toInteger $ negate n
+            (TTime.TimeObject (Time.UTCTime day2 _) _ _) = TTime.timePlusEnd nth TG.Week $ toInteger $ negate (n + 1)
+            (_, month, _) = Time.toGregorian day
+            (_, month2, _) = Time.toGregorian day2
+            t = if month == month2 then Just $ TTime.timePlusEnd nth TG.Week 1 else Just nth
 
 -- | Take the nth closest value to `basePred` among those yielded by
 -- `cyclicPred`.
@@ -500,6 +529,13 @@ cycleNthAfter :: Bool -> TG.Grain -> Int -> TimeData -> TimeData
 cycleNthAfter notImmediate grain n TimeData {TTime.timePred = p} =
   TTime.timedata'
     { TTime.timePred = takeNthAfter n notImmediate (timeCycle grain) p
+    , TTime.timeGrain = grain
+    }
+
+cycleNthWeekToLast :: TG.Grain -> Int -> TimeData -> TimeData
+cycleNthWeekToLast grain n TimeData {TTime.timePred = p} =
+  TTime.timedata'
+    { TTime.timePred = takeNthWeekToLast n (timeCycle grain) p
     , TTime.timeGrain = grain
     }
 
