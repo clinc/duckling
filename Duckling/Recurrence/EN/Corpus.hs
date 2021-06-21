@@ -56,15 +56,18 @@ examples :: ToJSON a => (Context -> a) -> [Text] -> [Example]
 examples f = examplesCustom (check f)
 
 recurrence :: Int -> Int -> Grain -> Context -> RecurrenceValue 
-recurrence v t g ctx = RecurrenceValue{TRecurrence.rValue = v, TRecurrence.rTimes = t, TRecurrence.rGrain = g, TRecurrence.rAnchor = Nothing}
+recurrence v t g ctx = RecurrenceValue{TRecurrence.rValue = v, TRecurrence.rTimes = t, TRecurrence.rGrain = g, TRecurrence.rAnchor = Nothing, TRecurrence.rInnerGrain = Nothing, TRecurrence.rInnerDay = Nothing, TRecurrence.rInnerInstance = Nothing}
 
 anchoredRecurrence :: Int -> Int -> Grain -> Datetime -> Grain -> Context -> RecurrenceValue 
-anchoredRecurrence v t g dt dtg ctx = RecurrenceValue{TRecurrence.rValue = v, TRecurrence.rTimes = t, TRecurrence.rGrain = g, TRecurrence.rAnchor = a}
+anchoredRecurrence v t g dt dtg ctx = RecurrenceValue{TRecurrence.rValue = v, TRecurrence.rTimes = t, TRecurrence.rGrain = g, TRecurrence.rAnchor = a, TRecurrence.rInnerGrain = Nothing, TRecurrence.rInnerDay = Nothing, TRecurrence.rInnerInstance = Nothing}
   where
     a = Just $ datetime dt dtg ctx
 
+instancedRecurrence :: Maybe Int -> Maybe Int -> Grain -> Maybe Grain -> Context -> RecurrenceValue 
+instancedRecurrence n d g ig ctx = RecurrenceValue{TRecurrence.rValue = 1, TRecurrence.rTimes = 1, TRecurrence.rGrain = g, TRecurrence.rAnchor = Nothing, TRecurrence.rInnerGrain = ig, TRecurrence.rInnerDay = d, TRecurrence.rInnerInstance = n}
+
 anchoredRecurrenceHoliday :: Int -> Int -> Grain -> Datetime -> Grain -> Text -> Context -> RecurrenceValue 
-anchoredRecurrenceHoliday v t g dt dtg h ctx = RecurrenceValue{TRecurrence.rValue = v, TRecurrence.rTimes = t, TRecurrence.rGrain = g, TRecurrence.rAnchor = a}
+anchoredRecurrenceHoliday v t g dt dtg h ctx = RecurrenceValue{TRecurrence.rValue = v, TRecurrence.rTimes = t, TRecurrence.rGrain = g, TRecurrence.rAnchor = a, TRecurrence.rInnerGrain = Nothing, TRecurrence.rInnerDay = Nothing, TRecurrence.rInnerInstance = Nothing}
   where
     a = Just $ datetimeHoliday dt dtg h ctx
 
@@ -173,5 +176,51 @@ allExamples = concat
     , "per 2 quarters"
     , "biquarterly"
     , "every two quarters"
+    ]
+  , examples (instancedRecurrence (Just 3) (Just 6) Month (Just Week))
+    [ "3rd saturday of every month"
+    , "third saturday each month"
+    , "3rd saturday each month"
+    ]
+  , examples (instancedRecurrence (Just 1) (Just 7) Year (Just Week))
+    [ "1st sunday of each year"
+    , "first sunday every year"
+    , "1st sunday per year"
+    ]
+  , examples (instancedRecurrence (Just 2) (Just 1) Month (Just Week))
+    [ "second monday of every month"
+    , "2nd monday each month"
+    ]
+  , examples (instancedRecurrence (Just 3) Nothing Year (Just Week))
+    [ "third week of every year"
+    , "3rd week each year"
+    ]
+  , examples (instancedRecurrence (Just 5) Nothing Year (Just Month))
+    [ "fifth month each year"
+    , "5th month per year"
+    ]
+  , examples (instancedRecurrence Nothing (Just 15) Month (Just Month))
+    [ "15th of every month"
+    ]
+  , examples (instancedRecurrence (Just 15) Nothing Month (Just Day))
+    [ "15th day of every month"
+    ]
+  , examples (instancedRecurrence (Just (- 1)) Nothing Month (Just Day))
+    [ "last day of every month"
+    ]
+  , examples (instancedRecurrence (Just (- 1)) (Just 5) Month (Just Week))
+    [ "last friday of every month"
+    ]
+  , examples (instancedRecurrence Nothing (Just 7) Week (Just Week))
+    [ "7th of every week"
+    ]
+  , examples (instancedRecurrence Nothing (Just 31) Month (Just Month))
+    [ "31st of every month"
+    ]
+  , examples (instancedRecurrence (Just 12) Nothing Year (Just Month))
+    [ "12th month of every year"
+    ]
+  , examples (instancedRecurrence Nothing (Just 31) Year (Just Month))
+    [ "31st of every year"
     ]
   ]

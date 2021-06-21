@@ -16,6 +16,8 @@ module Duckling.Recurrence.Helpers
   , recurrentDimension
   , isBasicRecurrence
   , mkComposite
+  , dowRecurrence
+  , instancedRecurrence
   , tr
   ) where
 
@@ -58,13 +60,19 @@ tr :: RecurrenceData -> Maybe Token
 tr = Just . Token Recurrence
 
 recurrence :: TG.Grain -> Int -> RecurrenceData
-recurrence g v = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = Nothing, TRecurrence.times = 1, TRecurrence.composite = False}
+recurrence g v = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = Nothing, TRecurrence.times = 1, TRecurrence.composite = False, TRecurrence.innerGrain = Nothing, TRecurrence.innerDay = Nothing,TRecurrence.innerInstance = Nothing}
 
 timedRecurrence :: TG.Grain -> Int -> Int -> RecurrenceData
-timedRecurrence g v t = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = Nothing, TRecurrence.times = t, TRecurrence.composite = False}
+timedRecurrence g v t = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = Nothing, TRecurrence.times = t, TRecurrence.composite = False, TRecurrence.innerGrain = Nothing, TRecurrence.innerDay = Nothing,TRecurrence.innerInstance = Nothing}
 
 anchoredRecurrence :: TG.Grain -> Int -> TimeData -> RecurrenceData
-anchoredRecurrence g v a = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = Just a, TRecurrence.times = 1, TRecurrence.composite = False}
+anchoredRecurrence g v a = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = Just a, TRecurrence.times = 1, TRecurrence.composite = False, TRecurrence.innerGrain = Nothing, TRecurrence.innerDay = Nothing, TRecurrence.innerInstance = Nothing}
 
 mkComposite :: RecurrenceData -> Int -> RecurrenceData
-mkComposite RecurrenceData { TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = a, TRecurrence.times = t } t' = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = a, TRecurrence.times = t * t', TRecurrence.composite = True}
+mkComposite RecurrenceData { TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = a, TRecurrence.times = t, TRecurrence.innerGrain = w, TRecurrence.innerInstance = wn} t' = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = v, TRecurrence.anchor = a, TRecurrence.times = t * t', TRecurrence.composite = True, TRecurrence.innerGrain = w, TRecurrence.innerDay = Nothing, TRecurrence.innerInstance = wn}
+
+dowRecurrence :: Int -> TimeData -> TG.Grain -> TG.Grain -> RecurrenceData
+dowRecurrence wn wd g ig = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = 1, TRecurrence.anchor = Just wd, TRecurrence.times = 1, TRecurrence.composite = False, TRecurrence.innerGrain = Just ig, TRecurrence.innerDay = Nothing, TRecurrence.innerInstance = Just wn}
+
+instancedRecurrence :: Maybe Int -> Maybe Int -> TG.Grain -> TG.Grain -> RecurrenceData
+instancedRecurrence it is g ig = RecurrenceData {TRecurrence.grain = g, TRecurrence.value = 1, TRecurrence.anchor = Nothing, TRecurrence.times = 1, TRecurrence.composite = False, TRecurrence.innerGrain = Just ig, TRecurrence.innerDay = is, TRecurrence.innerInstance = it}

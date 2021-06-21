@@ -28,12 +28,15 @@ import Duckling.Recurrence.Helpers
       recurrence,
       recurrentDimension,
       timedRecurrence,
+      dowRecurrence,
+      instancedRecurrence,
       tr )
-import Duckling.Duration.Types (DurationData (..))
+import Duckling.Duration.Types (DurationData(..))
 import Duckling.Recurrence.Types (RecurrenceData(..))
 import Duckling.Numeral.Helpers (parseInt, parseInteger)
 import Duckling.Numeral.Types (NumeralData(..))
-import Duckling.Time.Helpers (getIntValue)
+import Duckling.Ordinal.Types (OrdinalData(..))
+import Duckling.Time.Helpers (getIntValue, isADayOfWeek)
 import Duckling.Time.Types (TimeData(..))
 import Duckling.Regex.Types ( GroupMatch(GroupMatch) )
 import Duckling.Types
@@ -44,6 +47,7 @@ import Duckling.Types
       Token(Token) )
 import qualified Duckling.Duration.Types as TDuration
 import qualified Duckling.Numeral.Types as TNumeral
+import qualified Duckling.Ordinal.Types as TOrdinal
 import qualified Duckling.TimeGrain.Types as TG
 
 ruleEvery :: Rule
@@ -244,6 +248,81 @@ ruleCompositeOnceAGrain = Rule
       _ -> Nothing
   }
 
+ruleOrdinalDOWEveryGrain :: Rule
+ruleOrdinalDOWEveryGrain = Rule
+  { name = "<ordinal> <day-of-week> of every <grain>"
+  , pattern =
+    [ dimension Ordinal
+    , Predicate isADayOfWeek
+    , regex "(of |in )?(every|per|each)"
+    , dimension TimeGrain
+    ]
+  , prod = \tokens -> case tokens of
+      (Token Ordinal OrdinalData{TOrdinal.value}:Token Time td:_:Token TimeGrain grain:_) ->
+        tr $ dowRecurrence value td grain TG.Week
+      _ -> Nothing
+  }
+
+ruleLastDOWEveryGrain :: Rule
+ruleLastDOWEveryGrain = Rule
+  { name = "<ordinal> <day-of-week> of every <grain>"
+  , pattern =
+    [ regex "last|final"
+    , Predicate isADayOfWeek
+    , regex "(of |in )?(every|per|each)"
+    , dimension TimeGrain
+    ]
+  , prod = \tokens -> case tokens of
+      (_:Token Time td:_:Token TimeGrain grain:_) ->
+        tr $ dowRecurrence (- 1) td grain TG.Week
+      _ -> Nothing
+  }
+
+ruleOrdinalEveryGrain :: Rule
+ruleOrdinalEveryGrain = Rule
+  { name = "<ordinal> of every <grain>"
+  , pattern =
+    [ dimension Ordinal
+    , regex "(of |in )?(every|per|each)"
+    , dimension TimeGrain
+    ]
+  , prod = \tokens -> case tokens of
+      (Token Ordinal OrdinalData{TOrdinal.value}:_:Token TimeGrain grain:_) -> case grain of
+        TG.Week -> tr $ instancedRecurrence Nothing (Just value) grain TG.Week
+        _       -> tr $ instancedRecurrence Nothing (Just value) grain TG.Month
+      _ -> Nothing
+  }
+
+ruleOrdinalGrainEveryGrain :: Rule
+ruleOrdinalGrainEveryGrain = Rule
+  { name = "<ordinal> <grain> of every <grain>"
+  , pattern =
+    [ dimension Ordinal
+    , dimension TimeGrain
+    , regex "(of |in )?(every|per|each)"
+    , dimension TimeGrain
+    ]
+  , prod = \tokens -> case tokens of
+      (Token Ordinal OrdinalData{TOrdinal.value}:Token TimeGrain innerGrain:_:Token TimeGrain outerGrain:_) ->
+        tr $ instancedRecurrence (Just value) Nothing outerGrain innerGrain
+      _ -> Nothing
+  }
+
+ruleLastGrainEveryGrain :: Rule
+ruleLastGrainEveryGrain = Rule
+  { name = "last <grain> of every <grain>"
+  , pattern =
+    [ regex "last|final"
+    , dimension TimeGrain
+    , regex "(of |in )?(every|per|each)"
+    , dimension TimeGrain
+    ]
+  , prod = \tokens -> case tokens of
+      (_:Token TimeGrain innerGrain:_:Token TimeGrain outerGrain:_) ->
+        tr $ instancedRecurrence (Just (- 1)) Nothing outerGrain innerGrain
+      _ -> Nothing
+  }
+
 rules :: [Rule]
 rules =
   [ ruleEvery
@@ -258,4 +337,9 @@ rules =
   , ruleCompositeOnce
   , ruleCompositeTimesAGrain
   , ruleCompositeOnceAGrain
+  , ruleOrdinalDOWEveryGrain
+  , ruleLastDOWEveryGrain
+  , ruleOrdinalEveryGrain
+  , ruleOrdinalGrainEveryGrain
+  , ruleLastGrainEveryGrain
   ]
